@@ -23,13 +23,10 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
   const [isOpening, setIsOpening] = useState(false);
   const [currentMotif, setCurrentMotif] = useState<'ganesha' | 'monogram'>(sealMotif);
   const [isMuted, setIsMuted] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(() =>
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  const [reducedMotion, setReducedMotion] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   const envelopeRef = useRef<HTMLDivElement>(null);
-  const openingRef = useRef(false);
-  const openTimeoutRef = useRef<number | null>(null);
-  const soundTimeoutRef = useRef<number | null>(null);
 
   // Detect system reduced motion preference
   useEffect(() => {
@@ -37,11 +34,7 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
       mediaQuery.addEventListener('change', handleChange);
-      return () => {
-        mediaQuery.removeEventListener('change', handleChange);
-        if (openTimeoutRef.current !== null) window.clearTimeout(openTimeoutRef.current);
-        if (soundTimeoutRef.current !== null) window.clearTimeout(soundTimeoutRef.current);
-      };
+      return () => mediaQuery.removeEventListener('change', handleChange);
     }
   }, []);
 
@@ -54,14 +47,13 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
 
   // Open gesture handler
   const handleOpenEnvelope = (e?: React.MouseEvent | React.TouchEvent) => {
-    if (isOpen || openingRef.current) return;
+    if (isOpen || isOpening) return;
 
-    openingRef.current = true;
     setIsOpening(true);
 
     // Play sounds
     soundEffects.playWaxBreak();
-    soundTimeoutRef.current = window.setTimeout(() => {
+    setTimeout(() => {
       soundEffects.playPaperRustle();
     }, 280);
 
@@ -81,11 +73,9 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
 
     const transitionDuration = reducedMotion ? 50 : 500;
 
-    openTimeoutRef.current = window.setTimeout(() => {
+    setTimeout(() => {
       setIsOpen(true);
       setIsOpening(false);
-      openingRef.current = false;
-      openTimeoutRef.current = null;
       onStateChange?.(true);
     }, transitionDuration);
   };
@@ -93,9 +83,6 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
   // Close / Re-seal envelope
   const handleCloseEnvelope = () => {
     if (!isOpen) return;
-    openingRef.current = false;
-    if (openTimeoutRef.current !== null) window.clearTimeout(openTimeoutRef.current);
-    if (soundTimeoutRef.current !== null) window.clearTimeout(soundTimeoutRef.current);
     soundEffects.playPaperRustle();
     setIsOpen(false);
     setIsOpening(false);

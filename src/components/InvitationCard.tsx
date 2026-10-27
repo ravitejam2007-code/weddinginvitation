@@ -87,15 +87,9 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             </p>
 
             <div className="family-introduction-block">
-              {wedding.confirmation.familyNames ? (
-                <>
-                  <span className="family-names">{wedding.families.bride.invitationLine}</span>
-                  <span className="family-ampersand">&amp;</span>
-                  <span className="family-names">{wedding.families.groom.invitationLine}</span>
-                </>
-              ) : (
-                <span className="family-names">With their families</span>
-              )}
+              <span className="family-names">{wedding.families.bride.invitationLine}</span>
+              <span className="family-ampersand">&amp;</span>
+              <span className="family-names">{wedding.families.groom.invitationLine}</span>
             </div>
 
             <p className="invitation-request-phrase">
@@ -107,7 +101,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           <div className="couple-announcement-wrap reveal-item-3">
             <div className="bride-callout">
               <h1 className="couple-name bride-name">{wedding.couple.brideName}</h1>
-              {wedding.confirmation.familyNames && <p className="couple-lineage">{wedding.families.bride.lineage}</p>}
+              <p className="couple-lineage">{wedding.families.bride.lineage}</p>
             </div>
 
             <div className="calligraphic-ampersand" aria-hidden="true">
@@ -116,7 +110,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
 
             <div className="groom-callout">
               <h1 className="couple-name groom-name">{wedding.couple.groomName}</h1>
-              {wedding.confirmation.familyNames && <p className="couple-lineage">{wedding.families.groom.lineage}</p>}
+              <p className="couple-lineage">{wedding.families.groom.lineage}</p>
             </div>
           </div>
 
@@ -125,18 +119,12 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             <div className="announcement-divider-line" aria-hidden="true" />
             
             <p className="announcement-celebration-tag">AT THEIR WEDDING CELEBRATION</p>
-            <p className="announcement-time-line">
-              {wedding.confirmation.weddingDateTime ? `From ${formatWeddingTime(wedding.ceremony.startTime)} onwards` : 'Date and time to be confirmed'}
-            </p>
-            <p className="announcement-date-highlight">
-              {wedding.confirmation.weddingDateTime ? formatWeddingDate(wedding.ceremony.date) : 'Celebration details pending host confirmation'}
-            </p>
+            <p className="announcement-time-line">From {formatWeddingTime(wedding.ceremony.startTime)} onwards</p>
+            <p className="announcement-date-highlight">{formatWeddingDate(wedding.ceremony.date)}</p>
             
             <div className="announcement-venue-row">
               <span className="venue-pin-icon" aria-hidden="true">📍</span>
-              <span className="announcement-venue-name">
-                {wedding.confirmation.venue ? `Venue: ${wedding.venue.name}` : 'Venue to be confirmed'}
-              </span>
+              <span className="announcement-venue-name">Venue: {wedding.venue.name}</span>
             </div>
 
             <div className="announcement-divider-line" aria-hidden="true" />

@@ -39,7 +39,7 @@ export const CountdownTimer: React.FC = () => {
 
   useEffect(() => {
     // If target has already been reached in real-time, no need for interval
-    if (!wedding.confirmation.weddingDateTime || timeLeft.totalMs <= 0) return;
+    if (timeLeft.totalMs <= 0) return;
 
     const timer = setInterval(() => {
       const remaining = calculateTimeLeft();
@@ -52,7 +52,7 @@ export const CountdownTimer: React.FC = () => {
     return () => clearInterval(timer);
   }, [calculateTimeLeft, timeLeft.totalMs]);
 
-  const isWeddingDay = wedding.confirmation.weddingDateTime && (timeLeft.totalMs <= 0 || isPreviewWeddingDay);
+  const isWeddingDay = timeLeft.totalMs <= 0 || isPreviewWeddingDay;
 
   const handleCelebrate = () => {
     fireGoldSparkles(0.5, 0.45);
@@ -78,23 +78,22 @@ export const CountdownTimer: React.FC = () => {
               <div className="countdown-meta-row">
                 <span className="countdown-meta-item">
                   <Calendar size={12} className="meta-icon" />
-                  <span>{wedding.confirmation.weddingDateTime ? formatWeddingDateShort(wedding.ceremony.date) : 'Date to be confirmed'}</span>
+                  <span>{formatWeddingDateShort(wedding.ceremony.date)}</span>
                 </span>
                 <span className="countdown-meta-bullet" aria-hidden="true">&bull;</span>
                 <span className="countdown-meta-item">
                   <Clock size={12} className="meta-icon" />
-                  <span>{wedding.confirmation.weddingDateTime ? `${formatWeddingTime(wedding.ceremony.startTime)} IST (${wedding.timezone})` : 'Time to be confirmed'}</span>
+                  <span>{formatWeddingTime(wedding.ceremony.startTime)} IST ({wedding.timezone})</span>
                 </span>
                 <span className="countdown-meta-bullet" aria-hidden="true">&bull;</span>
                 <span className="countdown-meta-item">
                   <MapPin size={12} className="meta-icon" />
-                  <span>{wedding.confirmation.venue ? wedding.venue.name : 'Venue to be confirmed'}</span>
+                  <span>{wedding.venue.name}</span>
                 </span>
               </div>
             </header>
 
             {/* Large Serif Numerals Grid */}
-            {wedding.confirmation.weddingDateTime ? (
             <div className="countdown-serif-grid" role="timer" aria-label="Time remaining until wedding">
               {/* Days */}
               <div className="serif-time-unit">
@@ -126,9 +125,6 @@ export const CountdownTimer: React.FC = () => {
                 <span className="serif-unit-label">SECONDS</span>
               </div>
             </div>
-            ) : (
-              <p className="countdown-confirmation-note">The countdown will begin once the hosts confirm the ceremony date and time.</p>
-            )}
 
             <div className="countdown-card-footer">
               <p className="countdown-blessing-sub">
@@ -136,7 +132,7 @@ export const CountdownTimer: React.FC = () => {
               </p>
 
               {/* State Preview Toggle for Testing / Family Review */}
-              {wedding.confirmation.weddingDateTime && <button
+              <button
                 type="button"
                 className="btn-countdown-preview-toggle"
                 onClick={() => setIsPreviewWeddingDay(true)}
@@ -144,7 +140,7 @@ export const CountdownTimer: React.FC = () => {
               >
                 <Sparkles size={11} />
                 <span>Preview Wedding-Day Message</span>
-              </button>}
+              </button>
             </div>
           </div>
         ) : (
@@ -168,7 +164,7 @@ export const CountdownTimer: React.FC = () => {
             </div>
 
             <p className="wedding-day-body">
-              The sacred Muhurtham ceremonies are underway{wedding.confirmation.venue ? <> at <strong>{wedding.venue.formalName}</strong></> : ''}.
+              The sacred Muhurtham ceremonies are underway at <strong>{wedding.venue.formalName}</strong>. 
               With the cherished blessings of our elders and the divine grace of the Almighty, 
               our celebration of love and eternal vows begins today.
             </p>
