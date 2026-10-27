@@ -1,0 +1,44 @@
+/* App Root Layout & Transitions */
+.app-root {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: background-color 0.8s ease;
+  overflow-x: hidden;
+}
+
+.app-root.invitation-active {
+  background-color: var(--color-ivory-50);
+}
+
+.envelope-hero-viewport {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.suite-content-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1rem 5rem 1rem;
+  animation: suiteFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes suiteFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
