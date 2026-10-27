@@ -8,6 +8,21 @@
   z-index: 50;
 }
 
+.music-error-message {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  width: min(18rem, calc(100vw - 2rem));
+  padding: 0.55rem 0.7rem;
+  border: var(--border-paper);
+  background: var(--color-ivory-50);
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-paper);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
 .music-pill-button {
   display: inline-flex;
   align-items: center;
@@ -1490,6 +1505,21 @@
 .stationery-textarea:focus {
   border-color: var(--color-gold-base);
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22);
+}
+
+.stationery-input[aria-invalid="true"],
+.stationery-textarea[aria-invalid="true"] {
+  border-color: #b42318;
+  box-shadow: 0 0 0 2px rgba(180, 35, 24, 0.12);
+}
+
+.field-validation-error {
+  display: block;
+  margin-top: 0.35rem;
+  color: #a1261a;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 /* Attendance Toggle Pills */

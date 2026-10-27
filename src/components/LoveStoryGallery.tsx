@@ -89,6 +89,8 @@ export const LoveStoryGallery: React.FC = () => {
     isMuted, 
     trackTitle, 
     trackArtist, 
+    isAvailable,
+    error: audioError,
     togglePlay, 
     seek, 
     toggleMute 
@@ -100,20 +102,40 @@ export const LoveStoryGallery: React.FC = () => {
   const lightboxRef = useRef<HTMLDivElement | null>(null);
   const triggerButtonRefs = useRef<{ [key: number]: HTMLButtonElement | null }>({});
 
+  const handleCloseLightbox = useCallback(() => {
+    const lastIdx = activePhotoIdx;
+    setActivePhotoIdx(null);
+    if (lastIdx !== null) triggerButtonRefs.current[lastIdx]?.focus();
+  }, [activePhotoIdx]);
+
   // Keyboard navigation for accessible lightbox
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (activePhotoIdx === null) return;
 
       if (e.key === 'Escape') {
-        setActivePhotoIdx(null);
+        handleCloseLightbox();
       } else if (e.key === 'ArrowRight') {
         setActivePhotoIdx((prev) => (prev !== null ? (prev + 1) % storyPhotos.length : null));
       } else if (e.key === 'ArrowLeft') {
         setActivePhotoIdx((prev) => (prev !== null ? (prev - 1 + storyPhotos.length) % storyPhotos.length : null));
+      } else if (e.key === 'Tab' && lightboxRef.current) {
+        const focusable = Array.from(
+          lightboxRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'),
+        ).filter((element) => element.offsetParent !== null);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     },
-    [activePhotoIdx]
+    [activePhotoIdx, handleCloseLightbox]
   );
 
   useEffect(() => {
@@ -135,7 +157,7 @@ export const LoveStoryGallery: React.FC = () => {
   }, [activePhotoIdx]);
 
   // Progress Bar Seek Interaction
-  const handleSeekFromEvent = (e: React.MouseEvent<HTMLDivElement> | MouseEvent) => {
+  const handleSeekFromEvent = (e: Pick<React.PointerEvent<HTMLDivElement>, 'clientX'> | Pick<PointerEvent, 'clientX'>) => {
     if (!progressBarRef.current) return;
     const rect = progressBarRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
@@ -143,29 +165,21 @@ export const LoveStoryGallery: React.FC = () => {
     seek(ratio * duration);
   };
 
-  const handleProgressBarMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleProgressPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isAvailable) return;
     setIsScrubbing(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
     handleSeekFromEvent(e);
-
-    const onMouseMove = (moveEvent: MouseEvent) => {
-      handleSeekFromEvent(moveEvent);
-    };
-
-    const onMouseUp = () => {
-      setIsScrubbing(false);
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-    };
-
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
   };
 
-  const handleCloseLightbox = () => {
-    const lastIdx = activePhotoIdx;
-    setActivePhotoIdx(null);
-    if (lastIdx !== null && triggerButtonRefs.current[lastIdx]) {
-      triggerButtonRefs.current[lastIdx]?.focus();
+  const handleProgressPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isScrubbing) handleSeekFromEvent(e);
+  };
+
+  const handleProgressPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsScrubbing(false);
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
     }
   };
 
@@ -234,12 +248,13 @@ export const LoveStoryGallery: React.FC = () => {
           <div className="player-track-col">
             <div className="player-track-info-row">
               <div className="player-title-stack">
-                <span className="player-track-badge">CONFIRMED CEREMONIAL RAGA</span>
+                <span className="player-track-badge">{isAvailable ? 'WEDDING MUSIC' : 'MUSIC NOT CONFIGURED'}</span>
                 <h4 className="player-track-title">{trackTitle}</h4>
-                <p 
+                {trackArtist && <p
                   className="player-track-artist" 
                   dangerouslySetInnerHTML={{ __html: trackArtist }} 
-                />
+                />}
+                {audioError && <p className="player-footnote-hint" role="status">{audioError}</p>}
               </div>
 
               {/* Mute/Volume Toggle */}
@@ -247,6 +262,7 @@ export const LoveStoryGallery: React.FC = () => {
                 type="button"
                 className={`player-mute-btn ${isMuted ? 'muted' : ''}`}
                 onClick={toggleMute}
+                disabled={!isAvailable}
                 aria-label={isMuted ? 'Unmute music' : 'Mute music'}
                 title={isMuted ? 'Unmute music' : 'Mute music'}
               >
@@ -263,15 +279,19 @@ export const LoveStoryGallery: React.FC = () => {
                 className={`player-progress-bar-track ${isScrubbing ? 'scrubbing' : ''}`}
                 role="slider"
                 tabIndex={0}
+                aria-disabled={!isAvailable}
                 aria-label="Audio progress slider"
                 aria-valuemin={0}
                 aria-valuemax={duration}
                 aria-valuenow={Math.round(currentTime)}
                 aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
-                onMouseDown={handleProgressBarMouseDown}
+                onPointerDown={handleProgressPointerDown}
+                onPointerMove={handleProgressPointerMove}
+                onPointerUp={handleProgressPointerUp}
+                onPointerCancel={handleProgressPointerUp}
                 onKeyDown={(e) => {
-                  if (e.key === 'ArrowRight') seek(currentTime + 5);
-                  if (e.key === 'ArrowLeft') seek(currentTime - 5);
+                  if (isAvailable && e.key === 'ArrowRight') seek(currentTime + 5);
+                  if (isAvailable && e.key === 'ArrowLeft') seek(currentTime - 5);
                 }}
               >
                 <div 

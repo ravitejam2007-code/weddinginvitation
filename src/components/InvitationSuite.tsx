@@ -42,9 +42,15 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
         <header className="hero-family-intro">
           <p className="hero-intro-lead">Together with their families</p>
           <div className="hero-parents-grid">
-            <span className="hero-parent-name">{wedding.families.bride.invitationLine}</span>
-            <span className="hero-parent-amp">&amp;</span>
-            <span className="hero-parent-name">{wedding.families.groom.invitationLine}</span>
+            {wedding.confirmation.familyNames ? (
+              <>
+                <span className="hero-parent-name">{wedding.families.bride.invitationLine}</span>
+                <span className="hero-parent-amp">&amp;</span>
+                <span className="hero-parent-name">{wedding.families.groom.invitationLine}</span>
+              </>
+            ) : (
+              <span className="hero-parent-name">With their families</span>
+            )}
           </div>
           <p className="hero-intro-sub">
             cordially invite you to celebrate the joyous union and wedding of their children
@@ -55,7 +61,7 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
         <div className="hero-dominant-couple-names">
           <div className="hero-name-block">
             <h1 className="hero-couple-title">{wedding.couple.brideName}</h1>
-            <span className="hero-lineage-subtitle">{wedding.families.bride.lineage}</span>
+            {wedding.confirmation.familyNames && <span className="hero-lineage-subtitle">{wedding.families.bride.lineage}</span>}
           </div>
 
           <div className="hero-calligraphic-amp" aria-hidden="true">
@@ -64,7 +70,7 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
 
           <div className="hero-name-block">
             <h1 className="hero-couple-title">{wedding.couple.groomName}</h1>
-            <span className="hero-lineage-subtitle">{wedding.families.groom.lineage}</span>
+            {wedding.confirmation.familyNames && <span className="hero-lineage-subtitle">{wedding.families.groom.lineage}</span>}
           </div>
         </div>
 
@@ -84,11 +90,17 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
           <div className="hero-divider-flourish" aria-hidden="true" />
           <p className="announcement-ceremony-type">THE WEDDING CELEBRATION</p>
           <div className="announcement-date-venue-row">
-            <span className="announcement-date-text">{formatWeddingDate(wedding.ceremony.date)}</span>
+            <span className="announcement-date-text">
+              {wedding.confirmation.weddingDateTime ? formatWeddingDate(wedding.ceremony.date) : 'Date to be confirmed'}
+            </span>
             <span className="announcement-bullet" aria-hidden="true">&bull;</span>
-            <span className="announcement-time-text">From {formatWeddingTime(wedding.ceremony.startTime)} Onwards</span>
+            <span className="announcement-time-text">
+              {wedding.confirmation.weddingDateTime ? `From ${formatWeddingTime(wedding.ceremony.startTime)} Onwards` : 'Time to be confirmed'}
+            </span>
           </div>
-          <p className="announcement-venue-text">{wedding.venue.name}</p>
+          <p className="announcement-venue-text">
+            {wedding.confirmation.venue ? wedding.venue.name : 'Venue to be confirmed'}
+          </p>
           <div className="hero-divider-flourish" aria-hidden="true" />
 
           <button
@@ -111,21 +123,27 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
           <span className="welcome-name">{wedding.couple.groomName}</span>
         </div>
         <p className="welcome-parents-line">
-          D/o {wedding.families.bride.parents} &bull; S/o {wedding.families.groom.parents}
+          {wedding.confirmation.familyNames
+            ? `D/o ${wedding.families.bride.parents} • S/o ${wedding.families.groom.parents}`
+            : 'Family details to be confirmed'}
         </p>
 
         {/* When & Where Badges */}
         <div className="metadata-badges-row">
           <div className="meta-badge-box">
             <span className="meta-badge-label">WHEN</span>
-            <span className="meta-badge-value">{formatWeddingDateShort(wedding.ceremony.date)}</span>
+            <span className="meta-badge-value">
+              {wedding.confirmation.weddingDateTime ? formatWeddingDateShort(wedding.ceremony.date) : 'To be confirmed'}
+            </span>
           </div>
 
           <div className="meta-badge-divider" aria-hidden="true" />
 
           <div className="meta-badge-box">
             <span className="meta-badge-label">WHERE</span>
-            <span className="meta-badge-value">{wedding.venue.name}</span>
+            <span className="meta-badge-value">
+              {wedding.confirmation.venue ? wedding.venue.name : 'To be confirmed'}
+            </span>
           </div>
         </div>
 
@@ -138,15 +156,19 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
       {/* 3. The Festivities Timeline: Reusable Event Cards with Alternating Layout */}
       <section id="festivities-timeline" className="festivities-section" aria-label="Wedding Itinerary and Timeline">
         <div className="festivities-header">
-          <span className="festivities-sub-tag">FOUR DAYS OF CELEBRATION</span>
-          <h2 className="festivities-heading">The Festivities</h2>
-          <p className="festivities-intro-sub">
-            Individual stationery itinerary cards for each sacred ceremony
-          </p>
+          <span className="festivities-sub-tag">
+            {wedding.confirmation.eventSchedule ? 'FOUR DAYS OF CELEBRATION' : 'ITINERARY PENDING'}
+          </span>
+          <h2 className="festivities-heading">
+            {wedding.confirmation.eventSchedule ? 'The Festivities' : 'Ceremony Schedule To Be Confirmed'}
+          </h2>
+          {!wedding.confirmation.eventSchedule && (
+            <p className="festivities-intro-sub">The hosts will share ceremony dates and times once confirmed.</p>
+          )}
         </div>
 
         {/* The Timeline Suite with Central Spine & Alternating Cards on Desktop */}
-        <div className="wedding-timeline-suite">
+        {wedding.confirmation.eventSchedule && wedding.confirmation.eventContent && <div className="wedding-timeline-suite">
           <div className="timeline-central-vine-spine" aria-hidden="true" />
           
           <div className="timeline-cards-flow">
@@ -163,14 +185,14 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
               />
             ))}
           </div>
-        </div>
+        </div>}
       </section>
 
       {/* 4. Dress Code & Guest Information Collection */}
       <GuestInformation />
 
       {/* 5. Music and Love Story Gallery */}
-      <LoveStoryGallery />
+      {wedding.confirmation.galleryContent && <LoveStoryGallery />}
 
       {/* 6. "Pick Your Side" Friendly Rivalry (From Video 00:54) */}
       <PickYourSide
@@ -195,17 +217,17 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
         <h3 className="footer-couple-signature">{wedding.couple.brideName} &amp; {wedding.couple.groomName}</h3>
 
         <div className="footer-parents-row">
-          <span>{wedding.families.bride.parents}</span>
+          <span>{wedding.confirmation.familyNames ? wedding.families.bride.parents : 'Family details to be confirmed'}</span>
           <span className="footer-dot" aria-hidden="true">&bull;</span>
-          <span>{wedding.families.groom.parents}</span>
+          <span>{wedding.confirmation.familyNames ? wedding.families.groom.parents : 'Family details to be confirmed'}</span>
         </div>
 
         <div className="footer-divider-ornament" aria-hidden="true" />
 
         <p className="footer-thank-you-message">
           &ldquo;Thank you from the bottom of our hearts for being part of our lives, our story, 
-          and our joy. Your prayers and presence illuminate our celebration, and we cannot wait 
-          to welcome you to Hyderabad with folded hands and warmest embrace.&rdquo;
+          and our joy. Your prayers and presence illuminate our celebration, and we look forward
+          to sharing this special day with you.&rdquo;
         </p>
 
         <div className="footer-hashtag-pill">
@@ -213,7 +235,11 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
         </div>
 
         <div className="footer-date-line">
-          <span>{formatWeddingDateShort(wedding.ceremony.date)} &bull; {wedding.venue.name}</span>
+          <span>
+            {wedding.confirmation.weddingDateTime ? formatWeddingDateShort(wedding.ceremony.date) : 'Date to be confirmed'}
+            {' • '}
+            {wedding.confirmation.venue ? wedding.venue.name : 'Venue to be confirmed'}
+          </span>
         </div>
 
         <div className="footer-made-with-love">

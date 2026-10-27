@@ -39,7 +39,7 @@ const calendarEvent = (event: WeddingEvent) => [
   `DESCRIPTION:${event.quote} Venue: ${event.venue}. Dress code: ${event.dressCode}`,
   `LOCATION:${event.venue}, ${event.venueAddress}`,
   `DTSTART:${calendarStart(event)}`,
-  'STATUS:CONFIRMED',
+  'STATUS:TENTATIVE',
   'END:VEVENT',
 ].join('\r\n');
 

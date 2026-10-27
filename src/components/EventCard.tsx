@@ -3,6 +3,7 @@ import { Calendar, Clock, MapPin, Sparkles, Shirt } from 'lucide-react';
 import type { WeddingEvent } from '../data/events';
 import { downloadEventCalendar } from '../data/events';
 import { formatWeddingDateChip } from '../data/wedding';
+import { wedding } from '../data/wedding';
 
 interface EventCardProps {
   event: WeddingEvent;
@@ -77,7 +78,9 @@ export const EventCard: React.FC<EventCardProps> = ({
         {/* Card Header & Small Event Illustration */}
         <div className="event-card-top-header">
           <div className="event-title-stack">
-            <span className="event-date-eyebrow">{event.date.toUpperCase()}</span>
+            <span className="event-date-eyebrow">
+              {(wedding.confirmation.eventSchedule ? event.date : 'DATE TO BE CONFIRMED').toUpperCase()}
+            </span>
             <h3 className="event-card-title">{event.title}</h3>
             {event.vernacularTitle && (
               <p className="event-card-subtitle">{event.vernacularTitle}</p>
@@ -134,7 +137,9 @@ export const EventCard: React.FC<EventCardProps> = ({
             </div>
             <div className="detail-content">
               <span className="detail-label">TIME</span>
-              <span className="detail-val">{event.startTime}</span>
+                <span className="detail-val">
+                  {wedding.confirmation.eventSchedule ? event.startTime : 'Time to be confirmed'}
+                </span>
             </div>
           </div>
 
@@ -145,8 +150,10 @@ export const EventCard: React.FC<EventCardProps> = ({
             </div>
             <div className="detail-content">
               <span className="detail-label">VENUE</span>
-              <span className="detail-val">{event.venue}</span>
-              <span className="detail-sub-addr">{event.venueAddress}</span>
+              <span className="detail-val">
+                {wedding.confirmation.venue ? event.venue : 'Venue to be confirmed'}
+              </span>
+              {wedding.confirmation.venue && <span className="detail-sub-addr">{event.venueAddress}</span>}
             </div>
           </div>
 
@@ -157,8 +164,10 @@ export const EventCard: React.FC<EventCardProps> = ({
             </div>
             <div className="detail-content">
               <span className="detail-label">DRESS CODE</span>
-              <span className="dress-code-pill">{event.dressCode}</span>
-              {event.dressCodeTheme && (
+              <span className="dress-code-pill">
+                {wedding.confirmation.dressCodes ? event.dressCode : 'To be confirmed'}
+              </span>
+              {wedding.confirmation.dressCodes && event.dressCodeTheme && (
                 <span className="detail-sub-addr">{event.dressCodeTheme}</span>
               )}
             </div>
@@ -167,25 +176,28 @@ export const EventCard: React.FC<EventCardProps> = ({
 
         {/* Action Row: Directions, Calendar, and Optional Scratch-to-Reveal */}
         <div className="event-card-actions-row">
-          <a
-            href={event.mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="event-action-link"
-            title={`Get Google Maps directions to ${event.venue}`}
-          >
-            <MapPin size={13} />
-            <span>Directions</span>
-          </a>
+          {wedding.confirmation.venue && (
+            <a
+              href={event.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="event-action-link"
+              title={`Get Google Maps directions to ${event.venue}`}
+            >
+              <MapPin size={13} />
+              <span>Directions</span>
+            </a>
+          )}
 
           <button
             type="button"
             className="event-action-link"
             onClick={() => downloadEventCalendar(event)}
             title={`Add ${event.title} to calendar (.ics)`}
+            disabled={!wedding.confirmation.eventSchedule}
           >
             <Calendar size={13} />
-            <span>+ Add to Calendar</span>
+            <span>{wedding.confirmation.eventSchedule ? '+ Add to Calendar' : 'Calendar details pending'}</span>
           </button>
 
           {/* Scratch-to-reveal button for selected cards only */}

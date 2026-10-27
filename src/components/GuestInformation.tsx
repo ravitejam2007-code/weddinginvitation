@@ -427,7 +427,7 @@ export const GuestInformation: React.FC = () => {
         </h2>
         <div className="guest-info-divider-flourish" aria-hidden="true" />
         <p className="guest-info-subtitle">
-          A matching stationery collection of attire inspirations, family wishes, and confirmed arrangements
+          A matching stationery collection for confirmed attire guidance, family wishes, and guest information
         </p>
       </div>
 
@@ -445,7 +445,7 @@ export const GuestInformation: React.FC = () => {
           <span className="tab-badge">4 Events</span>
         </button>
 
-        <button
+        {wedding.confirmation.familyNames && <button
           type="button"
           role="tab"
           aria-selected={activeTab === 'hostmessage'}
@@ -455,7 +455,7 @@ export const GuestInformation: React.FC = () => {
           <HeartHandshake size={14} className="tab-icon" />
           <span className="tab-label">Host Message</span>
           <span className="tab-badge">From Families</span>
-        </button>
+        </button>}
 
         <button
           type="button"
@@ -466,7 +466,7 @@ export const GuestInformation: React.FC = () => {
         >
           <Info size={14} className="tab-icon" />
           <span className="tab-label">Guest Instructions</span>
-          <span className="tab-badge">Confirmed</span>
+          <span className="tab-badge">Host details pending</span>
         </button>
       </div>
 
@@ -478,6 +478,12 @@ export const GuestInformation: React.FC = () => {
           <CardFloralFrame />
 
           <div className="card-inner-pad">
+            {!wedding.confirmation.dressCodes ? (
+              <div className="guidance-bottom-note">
+                <p className="bottom-note-text">Ceremony dates, dress codes, and color guidance will be published after host confirmation.</p>
+              </div>
+            ) : (
+            <>
             {/* Ceremony Selector Pills */}
             <div className="dresscode-subnav-pills" role="tablist" aria-label="Choose ceremony for attire">
               {ceremoniesDressCode.map((item, idx) => (
@@ -608,6 +614,8 @@ export const GuestInformation: React.FC = () => {
                 </button>
               </div>
             </div>
+            </>
+            )}
           </div>
         </article>
       )}
@@ -615,7 +623,7 @@ export const GuestInformation: React.FC = () => {
       {/* ─────────────────────────────────────────────────────────────
           CARD 2: HOST FAMILY MESSAGE CARD
           ───────────────────────────────────────────────────────────── */}
-      {activeTab === 'hostmessage' && (
+      {activeTab === 'hostmessage' && wedding.confirmation.familyNames && (
         <article className="info-stationery-card deckled-paper host-card-paper" role="tabpanel" aria-label="Host Message Card">
           <CardFloralFrame />
 
@@ -635,14 +643,14 @@ export const GuestInformation: React.FC = () => {
             <div className="host-families-header">
               <div className="family-col">
                 <span className="family-role">Bride's Parents</span>
-                <span className="family-title">{wedding.families.bride.parents}</span>
+                <span className="family-title">{wedding.confirmation.familyNames ? wedding.families.bride.parents : 'Family details to be confirmed'}</span>
               </div>
 
               <div className="family-amp" aria-hidden="true">&amp;</div>
 
               <div className="family-col">
                 <span className="family-role">Groom's Parents</span>
-                <span className="family-title">{wedding.families.groom.parents}</span>
+                <span className="family-title">{wedding.confirmation.familyNames ? wedding.families.groom.parents : 'Family details to be confirmed'}</span>
               </div>
             </div>
 
@@ -655,8 +663,8 @@ export const GuestInformation: React.FC = () => {
                 friendship, and eternal love.
               </p>
               <p>
-                Your prayers, blessings, and warm presence mean the world to both our families. Whether you 
-                are traveling from afar or joining us locally in Hyderabad, we await 
+                Your prayers, blessings, and warm presence mean the world to both our families. Whether you
+                are traveling from afar or joining locally, we await
                 the joy and honor of welcoming you with open arms and heartfelt celebrations.&rdquo;
               </p>
             </div>
@@ -668,16 +676,10 @@ export const GuestInformation: React.FC = () => {
               </div>
 
               <div className="hospitality-content">
-                <span className="hospitality-title">HOSPITALITY &amp; ACCOMMODATIONS</span>
+                <span className="hospitality-title">GUEST INFORMATION</span>
                 <p className="hospitality-text">
-                  Dedicated guest rooms, airport transit, and 24/7 concierge assistance have been arranged 
-                  for our visiting guests at <strong>{wedding.venue.formalName}</strong>.
+                  Accommodation, travel, and contact details will be added after the hosts confirm those arrangements.
                 </p>
-                <div className="hospitality-contact-row">
-                  <span className="hospitality-phone">Guest Concierge Helpline: +91 98765 43210</span>
-                  <span className="hospitality-bullet" aria-hidden="true">&bull;</span>
-                  <span className="hospitality-email">hospitality@{wedding.couple.brideName.toLowerCase()}-{wedding.couple.groomName.toLowerCase()}.wedding</span>
-                </div>
               </div>
             </div>
           </div>
@@ -693,7 +695,7 @@ export const GuestInformation: React.FC = () => {
 
           <div className="card-inner-pad">
             <header className="guidance-header">
-              <span className="guidance-eyebrow">CONFIRMED GUEST INSTRUCTIONS</span>
+              <span className="guidance-eyebrow">GUEST INSTRUCTIONS</span>
               <h3 className="guidance-main-title">Useful Details for Your Comfort</h3>
               <p className="guidance-sub">
                 Gentle reminders curated to ensure you and your loved ones have a delightful and effortless experience
@@ -709,8 +711,8 @@ export const GuestInformation: React.FC = () => {
                 <div className="guidance-content">
                   <h4 className="guidance-item-title">Blessings Only</h4>
                   <p className="guidance-item-text">
-                    Your loving presence and sacred blessings are the most precious gifts we could ever ask for. 
-                    We respectfully and graciously request no boxed gifts.
+                    Your loving presence and sacred blessings are the most precious gifts we could ask for.
+                    {wedding.confirmation.giftPreference ? ' Please follow the hosts’ confirmed gift guidance.' : ' Gift preferences are still to be confirmed with the hosts.'}
                   </p>
                 </div>
               </div>
@@ -723,8 +725,7 @@ export const GuestInformation: React.FC = () => {
                 <div className="guidance-content">
                   <h4 className="guidance-item-title">Cherish the Moments</h4>
                   <p className="guidance-item-text">
-                    Feel free to capture and share candid photographs throughout the festivities! During the sacred 
-                    Muhurtham pheras and mangalsutra ritual, we invite you to be fully present with us in prayers.
+                    Please follow the hosts’ guidance on photography during each ceremony.
                   </p>
                 </div>
               </div>
@@ -735,10 +736,9 @@ export const GuestInformation: React.FC = () => {
                   <Car size={18} className="guide-icon" />
                 </div>
                 <div className="guidance-content">
-                  <h4 className="guidance-item-title">Complimentary Valet</h4>
+                  <h4 className="guidance-item-title">Travel &amp; Parking</h4>
                   <p className="guidance-item-text">
-                    Complimentary valet parking is available at the main <strong>Palace Porch</strong> entrance for 
-                    all ceremonies. Dedicated chauffeur hospitality lounges are arranged.
+                    Parking and arrival arrangements will be shared after the hosts confirm them.
                   </p>
                 </div>
               </div>
@@ -751,8 +751,7 @@ export const GuestInformation: React.FC = () => {
                 <div className="guidance-content">
                   <h4 className="guidance-item-title">Winter Evening Comfort</h4>
                   <p className="guidance-item-text">
-                    December evenings in Hyderabad can be pleasantly crisp (16&deg;C &ndash; 18&deg;C). 
-                    A light stole, pashmina shawl, or jacket is recommended for outdoor lawn celebrations.
+                    Weather and outdoor arrangements have not been confirmed. Check local forecasts closer to the event.
                   </p>
                 </div>
               </div>

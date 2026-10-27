@@ -14,6 +14,20 @@ export interface WeddingEventData {
 
 export const wedding = {
   timezone: 'Asia/Kolkata',
+  confirmation: {
+    coupleNames: true,
+    familyNames: false,
+    weddingDateTime: false,
+    venue: false,
+    eventSchedule: false,
+    eventContent: false,
+    dressCodes: false,
+    galleryContent: false,
+    rsvpDeadline: false,
+    rsvpContact: false,
+    hospitality: false,
+    giftPreference: false,
+  },
   couple: {
     brideName: 'Ashmita',
     groomName: 'Sripad',
@@ -41,8 +55,16 @@ export const wedding = {
     formalName: 'The Taj Palace, Hyderabad',
     address: 'Road No. 1, Banjara Hills, Hyderabad, Telangana 500034',
     mapsUrl: 'https://maps.google.com/?q=Taj+Palace+Hyderabad',
+    hospitalityNote: '',
   },
+  giftPreference: '',
+  giftCharity: '',
   rsvpDeadline: '2026-11-15',
+  contacts: {
+    whatsappNumber: '',
+    phoneNumber: '',
+    email: '',
+  },
   events: [
     {
       id: 'haldi',
