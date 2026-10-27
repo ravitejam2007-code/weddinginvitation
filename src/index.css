@@ -24,9 +24,8 @@ html, body {
 body {
   position: relative;
   background-color: var(--color-ivory);
-  background-image: 
-    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.8) 0%, rgba(251, 249, 243, 0.45) 60%, rgba(229, 224, 211, 0.55) 100%),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.038 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-image: url('/images/illustrations/paper-grain.svg');
+  background-size: 240px 240px;
   background-repeat: repeat;
   background-attachment: fixed;
 }

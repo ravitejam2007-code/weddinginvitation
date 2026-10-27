@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <rect width="160" height="160" fill="#56634b"/>
+  <path d="M0 40 40 0l40 40-40 40L0 40Zm80 0 40-40 40 40-40 40-40-40ZM0 120l40-40 40 40-40 40-40-40Zm80 0 40-40 40 40-40 40-40-40Z" fill="none" stroke="#b18a4a" stroke-width="1" opacity=".32"/>
+  <g fill="none" stroke="#d6b5ad" stroke-width=".8" opacity=".5">
+    <circle cx="40" cy="40" r="8"/><circle cx="120" cy="40" r="8"/><circle cx="40" cy="120" r="8"/><circle cx="120" cy="120" r="8"/>
+    <path d="M40 28c-5 5-5 19 0 24 5-5 5-19 0-24Zm-12 12c5-5 19-5 24 0-5 5-19 5-24 0Z"/>
+    <path d="M120 28c-5 5-5 19 0 24 5-5 5-19 0-24Zm-12 12c5-5 19-5 24 0-5 5-19 5-24 0Z"/>
+    <path d="M40 108c-5 5-5 19 0 24 5-5 5-19 0-24Zm-12 12c5-5 19-5 24 0-5 5-19 5-24 0Z"/>
+    <path d="M120 108c-5 5-5 19 0 24 5-5 5-19 0-24Zm-12 12c5-5 19-5 24 0-5 5-19 5-24 0Z"/>
+  </g>
+  <g fill="#b18a4a" opacity=".55"><circle cx="40" cy="40" r="1.5"/><circle cx="120" cy="40" r="1.5"/><circle cx="40" cy="120" r="1.5"/><circle cx="120" cy="120" r="1.5"/></g>
+</svg>
