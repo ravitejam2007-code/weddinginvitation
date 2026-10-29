@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { X, Sparkles, CheckCircle2 } from 'lucide-react';
+import { X } from 'lucide-react';
 import { fireGoldSparkles } from '../utils/confetti';
 import { formatWeddingDate, getWeddingEvent, wedding } from '../data/wedding';
 
@@ -12,10 +12,9 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isPointerDown = useRef(false);
   const lastCoord = useRef<{ x: number; y: number } | null>(null);
-  const [revealedPercent, setRevealedPercent] = useState(0);
   const [isFullyRevealed, setIsFullyRevealed] = useState(false);
 
-  // Initialize turmeric paste coating on canvas
+  // Initialize turmeric paste coating on canvas matching reference video frame_11
   const initCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -38,28 +37,20 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
     for (let i = 0; i < 180; i++) {
       ctx.fillStyle = i % 2 === 0 ? 'rgba(255, 230, 100, 0.35)' : 'rgba(180, 83, 9, 0.2)';
       ctx.beginPath();
-      ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 6 + 2, 0, Math.PI * 2);
+      ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 5 + 2, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Outer decorative border
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.lineWidth = 4;
+    // Outer gold hairline border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.lineWidth = 2;
     ctx.strokeRect(12, 12, width - 24, height - 24);
 
-    // Center Haldi Badge Graphic
-    ctx.fillStyle = '#ffffff';
-    ctx.font = "bold 18px 'Cinzel', serif";
+    // Clean, elegant bottom instruction text matching reference video
+    ctx.font = "600 11px 'Montserrat', sans-serif";
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
     ctx.textAlign = 'center';
-    ctx.fillText('✨ HALDI CEREMONY ✨', width / 2, height / 2 - 20);
-
-    ctx.font = "14px 'Montserrat', sans-serif";
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.fillText('Manjal Neerattu Vizha', width / 2, height / 2 + 10);
-
-    ctx.font = "11px 'Montserrat', sans-serif";
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    ctx.fillText('Rub with mouse, touch or stylus to reveal', width / 2, height / 2 + 36);
+    ctx.fillText('RUB OFF THE TURMERIC', width / 2, height - 34);
   }, []);
 
   useEffect(() => {
@@ -78,9 +69,8 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
     const currentX = clientX - rect.left;
     const currentY = clientY - rect.top;
 
-    // Radius dynamically adapts to pressure if stylus is used
     const baseRadius = 32;
-    const radius = Math.max(20, Math.min(50, baseRadius * (pressure > 0 ? pressure * 1.6 : 1)));
+    const radius = Math.max(22, Math.min(50, baseRadius * (pressure > 0 ? pressure * 1.6 : 1)));
 
     ctx.globalCompositeOperation = 'destination-out';
     ctx.lineCap = 'round';
@@ -99,10 +89,10 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
     }
 
     lastCoord.current = { x: currentX, y: currentY };
-    checkProgress();
+    checkRevealProgress();
   };
 
-  const checkProgress = () => {
+  const checkRevealProgress = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -118,7 +108,7 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
 
     for (let y = 0; y < height; y += sampleSize) {
       for (let x = 0; x < width; x += sampleSize) {
-        const index = (y * width + x) * 4 + 3; // Alpha channel
+        const index = (y * width + x) * 4 + 3;
         if (imgData[index] < 128) {
           transparentCount++;
         }
@@ -127,9 +117,8 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
     }
 
     const percent = Math.round((transparentCount / totalSamples) * 100);
-    setRevealedPercent(percent);
 
-    if (percent > 40 && !isFullyRevealed) {
+    if (percent > 30 && !isFullyRevealed) {
       handleCompleteReveal();
     }
   };
@@ -139,14 +128,13 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
     fireGoldSparkles(0.5, 0.5);
   };
 
-  // Pointer event handlers for unified Mouse, Touch, and Stylus/Pen support
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     isPointerDown.current = true;
     lastCoord.current = null;
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {
-      // Ignored if capture unsupported
+      // Ignored
     }
     scratchStroke(e.clientX, e.clientY, e.pressure);
   };
@@ -169,19 +157,10 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
   };
 
   return (
-    <div className="ceremony-modal-overlay" role="dialog" aria-modal="true">
+    <div className="ceremony-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="haldi-modal-title">
       <div className="ceremony-modal-card deckled-paper">
-        {/* Header Actions */}
+        {/* Minimal Modal Close Button */}
         <div className="modal-top-bar">
-          <button
-            type="button"
-            className="btn-quick-reveal"
-            onClick={handleCompleteReveal}
-            disabled={isFullyRevealed}
-          >
-            <Sparkles size={14} />
-            <span>{isFullyRevealed ? "Revealed!" : "Reveal >"}</span>
-          </button>
           <button
             type="button"
             className="btn-modal-close"
@@ -202,19 +181,19 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
 
           <div className="ceremony-details-sheet">
             <span className="ceremony-date-badge">{formatWeddingDate(event.date).toUpperCase()}</span>
-            <h3 className="ceremony-modal-title">{event.title}</h3>
+            <h3 id="haldi-modal-title" className="ceremony-modal-title">{event.title}</h3>
             <p className="ceremony-tamil-title">Manjal Neerattu Vizha</p>
             <p className="ceremony-modal-time">{event.startTime} Onwards • {wedding.venue.name}</p>
             <blockquote className="ceremony-modal-quote">
-              &ldquo;Turmeric, laughter, and the very first blessings of our union.&rdquo;
+              &ldquo;Turmeric, laughter and the very first blessings.&rdquo;
             </blockquote>
             <div className="ceremony-dress-hint">
-              <span>Dress Code:</span> Bright Yellows &amp; Sunny Shades
+              <span>Dress Code:</span> Shades of Yellow &amp; Gold
             </div>
           </div>
         </div>
 
-        {/* Genuine Turmeric Scratch-Off Layer (Mouse, Touch & Stylus support) */}
+        {/* Canvas Scratch Layer */}
         {!isFullyRevealed && (
           <canvas
             ref={canvasRef}
@@ -226,21 +205,6 @@ export const HaldiScratchReveal: React.FC<HaldiScratchRevealProps> = ({ onClose 
             onPointerCancel={handlePointerUp}
           />
         )}
-
-        {/* Interaction Prompt Footer */}
-        <div className="modal-interaction-prompt">
-          {!isFullyRevealed ? (
-            <div className="prompt-turmeric-rub">
-              <span className="prompt-finger-icon" aria-hidden="true">✨</span>
-              <span>SCRATCH WITH FINGER, MOUSE OR STYLUS ({revealedPercent}%)</span>
-            </div>
-          ) : (
-            <div className="prompt-turmeric-done">
-              <CheckCircle2 size={16} />
-              <span>{event.title} Revealed!</span>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

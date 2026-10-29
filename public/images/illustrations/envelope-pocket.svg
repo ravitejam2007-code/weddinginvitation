@@ -1,11 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 390" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="sage" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#89957b"/><stop offset=".58" stop-color="#7f8c70"/><stop offset="1" stop-color="#626f56"/></linearGradient>
-    <linearGradient id="bottom" x1="0" y1="1" x2="0" y2="0"><stop stop-color="#626f56"/><stop offset="1" stop-color="#929d84"/></linearGradient>
+    <linearGradient id="ivorySide" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#fdfbf7"/>
+      <stop offset="100%" stop-color="#f5efe4"/>
+    </linearGradient>
+    <linearGradient id="ivoryBottom" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#efe7da"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
   </defs>
-  <path d="M0 0 290 205 0 390Z" fill="url(#sage)"/>
-  <path d="M580 0 290 205 580 390Z" fill="url(#sage)"/>
-  <path d="M0 390 290 188 580 390Z" fill="url(#bottom)"/>
-  <path d="M0 388 290 188 580 388" fill="none" stroke="#b18a4a" stroke-opacity=".32" stroke-width="1"/>
-  <path d="M0 0 290 205 580 0" fill="none" stroke="#fffdf9" stroke-opacity=".16" stroke-width="1.5"/>
+  <path d="M0 0 290 205 0 390Z" fill="url(#ivorySide)"/>
+  <path d="M580 0 290 205 580 390Z" fill="url(#ivorySide)"/>
+  <path d="M0 390 290 188 580 390Z" fill="url(#ivoryBottom)"/>
+  <path d="M0 388 290 188 580 388" fill="none" stroke="#d4af37" stroke-opacity=".45" stroke-width="1.2"/>
+  <path d="M0 0 290 205 580 0" fill="none" stroke="#d4af37" stroke-opacity=".35" stroke-width="1"/>
 </svg>

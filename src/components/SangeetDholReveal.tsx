@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Sparkles, CheckCircle2, Volume2, VolumeX } from 'lucide-react';
+import { X } from 'lucide-react';
 import { fireGoldSparkles } from '../utils/confetti';
 import { formatWeddingDate, getWeddingEvent, wedding } from '../data/wedding';
 
@@ -12,15 +12,12 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
   const [tapCount, setTapCount] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isBouncing, setIsBouncing] = useState(false);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   const targetBeats = 5;
 
   // Synthesize authentic Indian Dhol percussion beat (Dha / Ge / Na)
   const playDholBeat = (pitch: number) => {
-    if (!isSoundEnabled) return;
-
     try {
       if (!audioCtxRef.current) {
         const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -38,7 +35,7 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
       osc.frequency.setValueAtTime(pitch, now);
       osc.frequency.exponentialRampToValueAtTime(45, now + 0.18);
 
-      oscGain.gain.setValueAtTime(0.4, now);
+      oscGain.gain.setValueAtTime(0.45, now);
       oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
       osc.connect(oscGain);
@@ -53,7 +50,7 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
       snapOsc.frequency.setValueAtTime(pitch * 2.8, now);
       snapOsc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
 
-      snapGain.gain.setValueAtTime(0.25, now);
+      snapGain.gain.setValueAtTime(0.3, now);
       snapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
 
       snapOsc.connect(snapGain);
@@ -89,34 +86,10 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
   };
 
   return (
-    <div className="ceremony-modal-overlay" role="dialog" aria-modal="true">
+    <div className="ceremony-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="sangeet-modal-title">
       <div className="ceremony-modal-card deckled-paper">
-        {/* Header */}
+        {/* Minimal Modal Close Button */}
         <div className="modal-top-bar">
-          <div className="modal-top-actions-left">
-            <button
-              type="button"
-              className="btn-quick-reveal"
-              onClick={handleCompleteReveal}
-              disabled={isRevealed}
-            >
-              <Sparkles size={14} />
-              <span>{isRevealed ? "Revealed!" : "Reveal >"}</span>
-            </button>
-
-            {/* Optional Dhol Audio Toggle */}
-            <button
-              type="button"
-              className={`dhol-audio-toggle-btn ${isSoundEnabled ? 'sound-on' : 'sound-off'}`}
-              onClick={() => setIsSoundEnabled(!isSoundEnabled)}
-              title={isSoundEnabled ? "Mute dhol beat audio" : "Enable dhol beat audio"}
-              aria-label={isSoundEnabled ? "Dhol sound active. Click to mute" : "Dhol sound muted. Click to enable"}
-            >
-              {isSoundEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
-              <span>{isSoundEnabled ? 'Beat Audio On' : 'Muted'}</span>
-            </button>
-          </div>
-
           <button
             type="button"
             className="btn-modal-close"
@@ -137,11 +110,11 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
 
           <div className="ceremony-details-sheet">
             <span className="ceremony-date-badge">{formatWeddingDate(event.date).toUpperCase()}</span>
-            <h3 className="ceremony-modal-title">{event.title}</h3>
-            <p className="ceremony-tamil-title">An evening of song, dance and celebrations</p>
+            <h3 id="sangeet-modal-title" className="ceremony-modal-title">{event.title}</h3>
+            <p className="ceremony-tamil-title">An evening of song</p>
             <p className="ceremony-modal-time">{event.startTime} Onwards • {wedding.venue.name}</p>
             <blockquote className="ceremony-modal-quote">
-              &ldquo;Music, dance and the whole family on its feet!&rdquo;
+              &ldquo;Music, dance and the whole family on its feet.&rdquo;
             </blockquote>
             <div className="ceremony-dress-hint">
               <span>Dress Code:</span> Royal Indo-Western &amp; Glitz
@@ -149,7 +122,7 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
           </div>
         </div>
 
-        {/* Interactive Dhol Drum Layer */}
+        {/* Interactive Dhol Drum Layer from Reference Video frame_31 */}
         {!isRevealed && (
           <div className="dhol-interaction-overlay">
             <div className="dhol-center-stage">
@@ -158,7 +131,7 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
                 type="button"
                 className={`dhol-drum-button ${isBouncing ? 'dhol-bounce' : ''}`}
                 onClick={handleDholTap}
-                aria-label="Tap the dhol to the beat (audio is optional)"
+                aria-label="Tap the dhol to the beat"
               >
                 <svg
                   viewBox="0 0 220 160"
@@ -200,10 +173,10 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
                   <circle cx="125" cy="142" r="5" fill="#10b981" />
                 </svg>
 
-                <span className="dhol-tap-label">Tap the dhol to the beat</span>
+                <span className="dhol-tap-label">Tap the dhol</span>
               </button>
 
-              {/* Rhythm Beat Progress Dots */}
+              {/* Rhythm Beat Progress Dots from Video */}
               <div className="dhol-beat-dots" aria-label={`Beat ${tapCount} of ${targetBeats}`}>
                 {Array.from({ length: targetBeats }).map((_, idx) => (
                   <span
@@ -213,23 +186,13 @@ export const SangeetDholReveal: React.FC<SangeetDholRevealProps> = ({ onClose })
                 ))}
               </div>
             </div>
+
+            {/* Bottom instruction matching frame_31 */}
+            <div className="dhol-bottom-caption">
+              <span>TAP THE DHOL TO THE BEAT</span>
+            </div>
           </div>
         )}
-
-        {/* Interaction Prompt Footer */}
-        <div className="modal-interaction-prompt">
-          {!isRevealed ? (
-            <div className="prompt-turmeric-rub">
-              <span className="prompt-finger-icon" aria-hidden="true">🥁</span>
-              <span>TAP THE DHOL ({tapCount}/{targetBeats} BEATS)</span>
-            </div>
-          ) : (
-            <div className="prompt-turmeric-done">
-              <CheckCircle2 size={16} />
-              <span>{event.title} Revealed!</span>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

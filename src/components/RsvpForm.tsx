@@ -2,18 +2,12 @@ import React, { useState } from 'react';
 import { 
   Calendar, 
   MapPin, 
-  Send, 
-  Phone, 
   Check, 
   Share2, 
-  Gift, 
-  Clock, 
-  ExternalLink, 
-  MessageSquare, 
   Edit3 
 } from 'lucide-react';
 import { fireGoldSparkles } from '../utils/confetti';
-import { weddingEvents, downloadEventCalendar, downloadFullWeddingCalendar } from '../data/events';
+import { weddingEvents, downloadFullWeddingCalendar } from '../data/events';
 import { formatWeddingDateShort, wedding } from '../data/wedding';
 
 interface RsvpFormProps {
@@ -100,7 +94,6 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
       }),
     };
 
-    // Save to localStorage for real verified receipt
     try {
       localStorage.setItem(RSVP_STORAGE_KEY, JSON.stringify(submission));
     } catch {
@@ -110,9 +103,8 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
     setSubmittedData(submission);
     setIsSubmitted(true);
 
-    // Build real WhatsApp submission payload
     const teamText = selectedTeam
-      ? `Cheering for: ${selectedTeam === 'bride' ? `Team Bride (${wedding.couple.brideName}) 🌸` : `Team Groom (${wedding.couple.groomName}) 🍨`}\n`
+      ? `Cheering for: ${selectedTeam === 'bride' ? `Team Bride (${wedding.couple.brideName}) 🌸` : `Team Groom (${wedding.couple.groomName}) 👑`}\n`
       : '';
 
     const celebrationsText = attending === 'yes' 
@@ -144,11 +136,9 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
       .filter(Boolean)
       .join('\n');
 
-    // Real Destination: Dispatch directly to Wedding Concierge on WhatsApp
     const conciergeNumber = '919876543210';
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${conciergeNumber}&text=${encodeURIComponent(messageLines)}`;
     
-    // Open in new tab
     window.open(whatsappUrl, '_blank');
   };
 
@@ -172,21 +162,42 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
 
   return (
     <section className="rsvp-final-suite-section" aria-labelledby="rsvp-section-heading">
-      {/* ─────────────────────────────────────────────────────────────
-          CARD 1: RSVP CARD (WITH REAL DESTINATION & OPTIONAL MESSAGE)
-          ───────────────────────────────────────────────────────────── */}
       <article className="rsvp-stationery-card deckled-paper" aria-label="RSVP Response Card">
         <div className="card-hairline-accent" aria-hidden="true" />
 
         <header className="rsvp-header-content">
           <span className="rsvp-eyebrow-tag">KINDLY RESPOND</span>
           <h2 id="rsvp-section-heading" className="rsvp-main-title">
-            Will You Join Us?
+            Will you join us?
           </h2>
           <p className="rsvp-deadline-text">
-            Please respond by <strong>{formatWeddingDateShort(wedding.rsvpDeadline)}</strong>.<br />
-            Your response is dispatched directly to our family concierge desk on WhatsApp.
+            Kindly reply by <strong>{formatWeddingDateShort(wedding.rsvpDeadline)}</strong>.<br />
+            Your response opens straight in WhatsApp.
           </p>
+
+          {/* Quick Calendar & Directions Pills from Video */}
+          <div className="rsvp-quick-header-actions">
+            <button
+              type="button"
+              className="btn-rsvp-quick-cal"
+              onClick={() => downloadFullWeddingCalendar()}
+              title="Add all wedding ceremonies to your calendar (.ics)"
+            >
+              <Calendar size={13} />
+              <span>+ ADD WEDDING TO CALENDAR</span>
+            </button>
+
+            <a
+              href={wedding.venue.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-rsvp-quick-dir"
+              title="Open Google Maps directions to venue"
+            >
+              <MapPin size={13} />
+              <span>DIRECTIONS</span>
+            </a>
+          </div>
         </header>
 
         {!isSubmitted ? (
@@ -194,13 +205,13 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
             {/* Guest Name Input */}
             <div className="form-group-block">
               <label htmlFor="guest-full-name" className="form-field-label">
-                YOUR FULL NAME <span className="field-required">*</span>
+                YOUR NAME <span className="field-required">*</span>
               </label>
               <input
                 id="guest-full-name"
                 type="text"
                 className="stationery-input"
-                placeholder="e.g., Lakshmi Iyer &amp; Family"
+                placeholder="e.g. Lakshmi Iyer"
                 value={guestName}
                 onChange={(e) => setGuestName(e.target.value)}
                 required
@@ -234,7 +245,7 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
                   onClick={() => setAttending('yes')}
                 >
                   <Check size={14} className="pill-check-icon" />
-                  <span>Joyfully Yes!</span>
+                  <span>Joyfully yes</span>
                 </button>
 
                 <button
@@ -244,7 +255,7 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
                   className={`attendance-pill-btn ${attending === 'no' ? 'pill-active-no' : ''}`}
                   onClick={() => setAttending('no')}
                 >
-                  <span>Regretfully No</span>
+                  <span>Regretfully no</span>
                 </button>
               </div>
             </div>
@@ -254,7 +265,7 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
               <div className="attending-details-accordion">
                 {/* Which Celebrations */}
                 <div className="form-group-block">
-                  <span className="form-field-label">WHICH CELEBRATIONS WILL YOU ATTEND?</span>
+                  <span className="form-field-label">WHICH CELEBRATIONS? (tap all that apply)</span>
                   <div className="ceremonies-chip-selector" role="group" aria-label="Select ceremonies">
                     {weddingEvents.map((evt) => {
                       const isChecked = celebrations.includes(evt.title);
@@ -269,8 +280,7 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
                           <span className="chip-indicator">
                             {isChecked ? <Check size={12} /> : null}
                           </span>
-                          <span className="chip-event-name">{evt.title}</span>
-                          <span className="chip-date-sub">{evt.date.split(',')[0]}</span>
+                          <span className="chip-event-name">{evt.title.replace(' Ceremony', '').replace(' Night', '')}</span>
                         </button>
                       );
                     })}
@@ -279,7 +289,7 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
 
                 {/* Guest Count Stepper */}
                 <div className="form-group-block">
-                  <span className="form-field-label">TOTAL NUMBER OF ATTENDING GUESTS</span>
+                  <span className="form-field-label">NUMBER OF GUESTS</span>
                   <div className="stepper-counter-row">
                     <button
                       type="button"
@@ -316,41 +326,42 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
                 id="personal-wishes-msg"
                 rows={3}
                 className="stationery-textarea"
-                placeholder={`Share a heartfelt blessing, dance song request, or warm wish for ${wedding.couple.brideName} & ${wedding.couple.groomName}...`}
+                placeholder={`Share a heartfelt blessing or warm wish for ${wedding.couple.brideName} & ${wedding.couple.groomName}...`}
                 value={personalMessage}
                 onChange={(e) => setPersonalMessage(e.target.value)}
               />
             </div>
 
-            {/* Real Submission Action Buttons */}
+            {/* WhatsApp Send Action Button */}
             <div className="form-submit-actions">
               <button type="submit" className="btn-primary-whatsapp-submit">
-                <Send size={16} />
-                <span>DISPATCH RSVP ON WHATSAPP</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span>SEND RSVP ON WHATSAPP</span>
               </button>
 
               <div className="rsvp-action-secondary-row">
-                {/* Share invite on WhatsApp */}
+                <p className="call-family-note">
+                  Prefer to call?{' '}
+                  <a href="tel:+919876543210" className="call-family-link">
+                    Call the family
+                  </a>
+                </p>
+
                 <button
                   type="button"
                   className="btn-secondary-share"
                   onClick={handleShareWeddingInvite}
-                  title="Share wedding invitation on WhatsApp with friends and family"
+                  title="Share wedding invitation on WhatsApp"
                 >
                   <Share2 size={13} />
-                  <span>Share Invitation</span>
+                  <span>Share Invite</span>
                 </button>
-
-                {/* Direct Call Concierge Desk */}
-                <a href="tel:+919876543210" className="btn-secondary-call" title="Call the wedding hospitality concierge">
-                  <Phone size={13} />
-                  <span>Helpline: +91 98765 43210</span>
-                </a>
               </div>
             </div>
           </form>
         ) : (
-          /* Verified Submission Receipt Display (Real destination feedback) */
           <div className="rsvp-receipt-card">
             <div className="receipt-success-badge">
               <Check size={22} className="check-gold-icon" />
@@ -378,19 +389,18 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
 
             {submittedData?.personalMessage && (
               <div className="receipt-message-quote">
-                <MessageSquare size={13} className="quote-icon" />
-                <p>&ldquo;{submittedData.personalMessage}&rdquo;</p>
+                <span>&ldquo;{submittedData.personalMessage}&rdquo;</span>
               </div>
             )}
 
-            <div className="receipt-footer-actions">
+            <div className="receipt-actions-row">
               <button
                 type="button"
-                className="btn-edit-rsvp"
+                className="btn-edit-receipt"
                 onClick={handleEditResponse}
               >
                 <Edit3 size={13} />
-                <span>Update / Resend RSVP</span>
+                <span>Update My RSVP</span>
               </button>
 
               <button
@@ -399,122 +409,11 @@ export const RsvpForm: React.FC<RsvpFormProps> = ({ selectedTeam }) => {
                 onClick={handleShareWeddingInvite}
               >
                 <Share2 size={13} />
-                <span>Share Invitation</span>
+                <span>Share with Family</span>
               </button>
             </div>
           </div>
         )}
-      </article>
-
-      {/* ─────────────────────────────────────────────────────────────
-          CARD 2: CEREMONY LOCATION & CALENDAR ACTIONS CARD
-          ───────────────────────────────────────────────────────────── */}
-      <article className="location-stationery-card deckled-paper" aria-label="Ceremony Location & Calendar Card">
-        <div className="card-hairline-accent" aria-hidden="true" />
-
-        <div className="location-header-row">
-          <div className="location-icon-box" aria-hidden="true">
-            <MapPin size={22} className="loc-pin-icon" />
-          </div>
-
-          <div className="location-title-stack">
-            <span className="location-eyebrow">CELEBRATION VENUE</span>
-            <h3 className="location-venue-name">{wedding.venue.formalName}</h3>
-            <p className="location-address-line">
-              {wedding.venue.address}
-            </p>
-          </div>
-        </div>
-
-        {/* Action Pills: Directions & Add to Calendar */}
-        <div className="venue-action-pills-row">
-          <a
-            href={wedding.venue.mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="venue-action-btn btn-maps"
-            title="Open in Google Maps"
-          >
-            <MapPin size={14} />
-            <span>Open Google Maps Directions</span>
-            <ExternalLink size={12} className="link-ext" />
-          </a>
-
-          <button
-            type="button"
-            className="venue-action-btn btn-calendar-all"
-            onClick={downloadFullWeddingCalendar}
-            title="Download full 4-day wedding calendar (.ics)"
-          >
-            <Calendar size={14} />
-            <span>+ Add All 4 Events to Calendar (.ics)</span>
-          </button>
-        </div>
-
-        {/* Ceremony-by-Ceremony Calendar Actions */}
-        <div className="ceremony-calendar-sublist">
-          <span className="sublist-heading">CALENDAR REMINDER BY CEREMONY</span>
-          <div className="ceremony-calendar-grid">
-            {weddingEvents.map((evt) => (
-              <button
-                key={evt.id}
-                type="button"
-                className="ceremony-cal-chip"
-                onClick={() => downloadEventCalendar(evt)}
-                title={`Download .ics reminder for ${evt.title}`}
-              >
-                <div className="cal-chip-icon-wrap" aria-hidden="true">
-                  <Calendar size={12} />
-                </div>
-                <div className="cal-chip-text">
-                  <span className="cal-evt-title">{evt.title}</span>
-                  <span className="cal-evt-date">{evt.date.split(',')[0]} &bull; {evt.startTime}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Venue Hospitality & Valet Note */}
-        <div className="location-valet-note">
-          <Clock size={13} className="valet-icon" />
-          <span>
-            Complimentary valet parking and chauffeur lounges are arranged at the <strong>Palace Porch</strong> for all functions.
-          </span>
-        </div>
-      </article>
-
-      {/* ─────────────────────────────────────────────────────────────
-          CARD 3: OPTIONAL GIFT INFORMATION CARD
-          ───────────────────────────────────────────────────────────── */}
-      <article className="gift-info-stationery-card deckled-paper" aria-label="Gift Information Card">
-        <div className="card-hairline-accent" aria-hidden="true" />
-
-        <div className="gift-card-inner">
-          <div className="gift-icon-wrap" aria-hidden="true">
-            <Gift size={20} className="gift-gold-icon" />
-          </div>
-
-          <span className="gift-eyebrow">YOUR PRESENCE IS OUR PRESENT</span>
-          <h3 className="gift-card-title">Blessings Only</h3>
-
-          <p className="gift-card-body">
-            The greatest gift you can bring to our wedding is your heartfelt love, joyous presence, 
-            and cherished blessings as we embark on this sacred journey together.
-          </p>
-
-          <p className="gift-card-tradition-note">
-            In honoring our families&rsquo; traditions, we kindly and respectfully request 
-            <strong> no boxed gifts</strong>.
-          </p>
-
-          <div className="gift-blessings-divider" aria-hidden="true" />
-
-          <p className="gift-charity-note">
-            If you wish to honor our union with a token of goodwill, we encourage contributing to our chosen 
-            initiative supporting children&rsquo;s education in Hyderabad.
-          </p>
-        </div>
       </article>
     </section>
   );

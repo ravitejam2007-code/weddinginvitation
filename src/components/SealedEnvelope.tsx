@@ -1,34 +1,36 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { WaxSeal } from './WaxSeal';
 import { InvitationCard } from './InvitationCard';
-import { EnvelopeLinerPattern } from './EnvelopeLinerPattern';
-import { FloralSprigs } from './FloralSprigs';
+import { ToranMotif } from './ToranMotif';
 import { soundEffects } from '../utils/audio';
 import { fireGoldSparkles } from '../utils/confetti';
-import { Sparkles, Volume2, VolumeX, Eye } from 'lucide-react';
+import { wedding } from '../data/wedding';
 
 export interface SealedEnvelopeProps {
-  sealMotif?: 'ganesha' | 'monogram';
+  initialOpen?: boolean;
   onStateChange?: (isOpen: boolean) => void;
   onExploreSuite?: () => void;
+  sealMotif?: string;
 }
 
 export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
-  sealMotif = 'ganesha',
+  initialOpen = false,
   onStateChange,
   onExploreSuite,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(initialOpen);
+  const [prevInitialOpen, setPrevInitialOpen] = useState(initialOpen);
+  if (initialOpen !== prevInitialOpen) {
+    setPrevInitialOpen(initialOpen);
+    if (initialOpen) {
+      setIsOpen(true);
+    }
+  }
   const [isOpening, setIsOpening] = useState(false);
-  const [currentMotif, setCurrentMotif] = useState<'ganesha' | 'monogram'>(sealMotif);
-  const [isMuted, setIsMuted] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   const envelopeRef = useRef<HTMLDivElement>(null);
 
-  // Detect system reduced motion preference
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -37,13 +39,6 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
   }, []);
-
-  // Sync mute state
-  const toggleMute = () => {
-    const nextMuted = !isMuted;
-    setIsMuted(nextMuted);
-    soundEffects.setMuted(nextMuted);
-  };
 
   // Open gesture handler
   const handleOpenEnvelope = (e?: React.MouseEvent | React.TouchEvent) => {
@@ -65,13 +60,13 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
     } else if (envelopeRef.current) {
       const rect = envelopeRef.current.getBoundingClientRect();
       const x = (rect.left + rect.width / 2) / window.innerWidth;
-      const y = (rect.top + rect.height * 0.55) / window.innerHeight;
+      const y = (rect.top + rect.height * 0.5) / window.innerHeight;
       fireGoldSparkles(x, y);
     } else {
-      fireGoldSparkles(0.5, 0.45);
+      fireGoldSparkles(0.5, 0.5);
     }
 
-    const transitionDuration = reducedMotion ? 50 : 500;
+    const transitionDuration = reducedMotion ? 50 : 650;
 
     setTimeout(() => {
       setIsOpen(true);
@@ -90,83 +85,17 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
   };
 
   return (
-    <div className="sealed-envelope-experience">
-      {/* Background Floral Sprigs */}
-      <FloralSprigs />
-
-      {/* Floating Controls Bar (Mute, Motif Toggle, Reduced Motion) */}
-      <header className="top-utility-bar" aria-label="Invitation Options">
-        <div className="utility-group">
-          {/* Audio Toggle */}
-          <button
-            type="button"
-            className="utility-btn"
-            onClick={toggleMute}
-            aria-label={isMuted ? "Unmute paper & seal sounds" : "Mute paper & seal sounds"}
-            title={isMuted ? "Unmute sounds" : "Mute sounds"}
-          >
-            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-            <span className="utility-label">{isMuted ? "Sound Off" : "Sound On"}</span>
-          </button>
-
-          {/* Motif Switcher (Ganesha / Monogram) */}
-          <button
-            type="button"
-            className="utility-btn motif-toggle-btn"
-            onClick={() => setCurrentMotif((m) => (m === 'ganesha' ? 'monogram' : 'ganesha'))}
-            aria-label={`Current seal emblem: ${currentMotif}. Tap to switch.`}
-            title="Toggle between Ganesha motif and Family Monogram"
-          >
-            <Sparkles size={16} />
-            <span className="utility-label">
-              Seal: {currentMotif === 'ganesha' ? 'Ganesha Motif' : 'Royal Monogram'}
-            </span>
-          </button>
-
-          {/* Reduced Motion Toggle */}
-          <button
-            type="button"
-            className={`utility-btn ${reducedMotion ? 'active-utility' : ''}`}
-            onClick={() => setReducedMotion((r) => !r)}
-            aria-label={reducedMotion ? "Enable full animations" : "Reduce motion animations"}
-            title="Toggle motion accessibility"
-          >
-            <Eye size={16} />
-            <span className="utility-label">{reducedMotion ? "Motion: Reduced" : "Motion: Full"}</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Main Interactive Stage */}
+    <div className={`sealed-envelope-experience ${isOpen ? 'is-opened-view' : 'is-sealed-view'}`}>
+      {/* Main Interactive Full-Screen Palace Gate Stage */}
       <main className="envelope-stage">
-        {/* Instruction Header */}
-        <AnimatePresence>
-          {!isOpen && (
-            <motion.div
-              className="envelope-instruction-container"
-              initial={{ opacity: 0, y: -15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10, transition: { duration: 0.25 } }}
-            >
-              <div className="instruction-badge">
-                <span className="instruction-icon" aria-hidden="true">✉</span>
-                <h2 className="instruction-text" id="envelope-prompt-text">
-                  Tap the envelope to open.
-                </h2>
-              </div>
-              <p className="instruction-sub">An auspicious celebration awaits</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* The 3D Envelope Artifact */}
+        {/* The 3D Full-Screen Gatefold / Palace Doors */}
         <div
           ref={envelopeRef}
-          className={`envelope-container ${isOpen ? 'state-opened' : 'state-sealed'} ${isOpening ? 'state-opening' : ''} ${reducedMotion ? 'reduced-motion' : ''}`}
+          className={`royal-gate-container ${isOpen ? 'state-opened' : 'state-sealed'} ${isOpening ? 'state-opening' : ''} ${reducedMotion ? 'reduced-motion' : ''}`}
           onClick={!isOpen ? handleOpenEnvelope : undefined}
           role={!isOpen ? "button" : "region"}
           tabIndex={!isOpen ? 0 : -1}
-          aria-labelledby="envelope-prompt-text"
+          aria-label={`Wedding Invitation Gate for ${wedding.couple.brideName} & ${wedding.couple.groomName}. Tap to open.`}
           onKeyDown={(e) => {
             if (!isOpen && (e.key === 'Enter' || e.key === ' ')) {
               e.preventDefault();
@@ -174,19 +103,13 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
             }
           }}
         >
-          {/* Subtle desk drop shadow that expands on open */}
-          <div className="envelope-cast-shadow" aria-hidden="true" />
-
-          {/* 1. Envelope Back Shell */}
-          <div className="envelope-layer-back">
-            {/* 2. Inner Pattern Lining inside the pocket */}
-            <div className="envelope-inner-liner">
-              <EnvelopeLinerPattern />
-            </div>
+          {/* Marigold Toran Garland across top edge of entire screen */}
+          <div className="royal-gate-toran-bar" aria-hidden="true">
+            <ToranMotif height={52} />
           </div>
 
-          {/* 3. The Invitation Card (slips out of the pocket) */}
-          <div className={`envelope-card-slot ${isOpen ? 'slot-open' : 'slot-closed'}`}>
+          {/* Inside Layer: The Royal Invitation Card */}
+          <div className={`royal-gate-inner-card ${isOpen ? 'card-revealed' : 'card-hidden'}`}>
             <InvitationCard
               isOpen={isOpen}
               onClose={handleCloseEnvelope}
@@ -194,67 +117,44 @@ export const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
             />
           </div>
 
-          {/* 4. Envelope Front Pocket (Left, Right, Bottom Triangles) */}
-          <div className="envelope-front-pocket" aria-hidden="true">
-            {/* Left triangular side fold */}
-            <div className="pocket-fold pocket-fold-left" />
-            {/* Right triangular side fold */}
-            <div className="pocket-fold pocket-fold-right" />
-            {/* Bottom triangular upward fold */}
-            <div className="pocket-fold pocket-fold-bottom" />
-            {/* Front gold embossed deckle edge line */}
-            <div className="pocket-gold-accent" />
-          </div>
-
-          {/* 5. Envelope Top Flap (Triangular flap that hinges open in 3D) */}
-          <div className="envelope-flap-hinge" aria-hidden="true">
-            <div className="flap-front">
-              {/* Sage green outer flap triangle */}
-              <div className="flap-triangle-sage" />
-            </div>
-            <div className="flap-back">
-              {/* Inner Jaali gold damask lining revealed when flap folds backwards */}
-              <div className="flap-triangle-liner">
-                <EnvelopeLinerPattern />
-              </div>
+          {/* Left Door / Gatefold Panel */}
+          <div className="royal-gate-door gate-door-left" aria-hidden="true">
+            <div className="gate-door-panel-texture">
+              <div className="door-gold-border" />
+              <div className="door-corner-accent top-left" />
+              <div className="door-corner-accent bottom-left" />
             </div>
           </div>
 
-          {/* 6. Wax Seal Element */}
-          <div className="envelope-wax-seal-anchor">
-            <WaxSeal
-              isOpen={isOpen}
-              isOpening={isOpening}
+          {/* Right Door / Gatefold Panel */}
+          <div className="royal-gate-door gate-door-right" aria-hidden="true">
+            <div className="gate-door-panel-texture">
+              <div className="door-gold-border" />
+              <div className="door-corner-accent top-right" />
+              <div className="door-corner-accent bottom-right" />
+            </div>
+          </div>
+
+          {/* Centerpiece Golden Ganesha Emblem (logoimage.png) in the green-marked place */}
+          <div className={`royal-gate-seal-anchor ${isOpen ? 'seal-hidden' : 'seal-visible'}`}>
+            <button
+              type="button"
+              className="royal-ganesha-emblem-seal"
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenEnvelope(e);
               }}
-              motif={currentMotif}
-              disabled={isOpen}
-            />
+              aria-label="Open wedding invitation"
+              title="Tap to open invitation"
+            >
+              <img
+                src="/images/logoimage.png"
+                alt="Lord Ganesha Emblem"
+                className="ganesha-seal-logo-img"
+              />
+            </button>
           </div>
         </div>
-
-        {/* Post-open helper message */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              className="open-state-helper"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.4 }}
-            >
-              <button
-                type="button"
-                className="btn-replay-envelope"
-                onClick={handleCloseEnvelope}
-                title="Close and seal the envelope again"
-              >
-                <span>Tap here to close &amp; seal envelope</span>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </main>
     </div>
   );

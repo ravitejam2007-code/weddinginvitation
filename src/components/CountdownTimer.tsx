@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Sparkles, Calendar, Clock, MapPin, Heart } from 'lucide-react';
 import { fireGoldSparkles } from '../utils/confetti';
-import { formatWeddingDateShort, formatWeddingTime, wedding } from '../data/wedding';
+import { wedding } from '../data/wedding';
 
 interface TimeLeft {
   days: number;
@@ -11,10 +11,10 @@ interface TimeLeft {
   totalMs: number;
 }
 
+// Confirmed Wedding Date & Time: Friday, 11 December 2026, 18:00:00 IST (Asia/Kolkata)
 const WEDDING_TARGET_ISO = `${wedding.ceremony.date}T${wedding.ceremony.startTime}:00+05:30`;
 
 export const CountdownTimer: React.FC = () => {
-  // Asia/Kolkata UTC timestamp
   const targetTimestamp = new Date(WEDDING_TARGET_ISO).getTime();
 
   const calculateTimeLeft = useCallback((): TimeLeft => {
@@ -38,7 +38,6 @@ export const CountdownTimer: React.FC = () => {
   const [isPreviewWeddingDay, setIsPreviewWeddingDay] = useState(false);
 
   useEffect(() => {
-    // If target has already been reached in real-time, no need for interval
     if (timeLeft.totalMs <= 0) return;
 
     const timer = setInterval(() => {
@@ -71,19 +70,19 @@ export const CountdownTimer: React.FC = () => {
           <div className="countdown-content-pad">
             {/* Small Refined Countdown Heading */}
             <header className="countdown-card-header">
-              <span className="countdown-eyebrow-tag">AWAITING THE SACRED MUHURTHAM</span>
+              <span className="countdown-eyebrow-tag">COUNTING DOWN TO THE SACRED VOWS</span>
               <h3 id="countdown-heading" className="countdown-main-heading">
-                Counting Down to the Sacred Vows
+                Awaiting the Sacred Muhurtham
               </h3>
               <div className="countdown-meta-row">
                 <span className="countdown-meta-item">
                   <Calendar size={12} className="meta-icon" />
-                  <span>{formatWeddingDateShort(wedding.ceremony.date)}</span>
+                  <span>11 December 2026</span>
                 </span>
                 <span className="countdown-meta-bullet" aria-hidden="true">&bull;</span>
                 <span className="countdown-meta-item">
                   <Clock size={12} className="meta-icon" />
-                  <span>{formatWeddingTime(wedding.ceremony.startTime)} IST ({wedding.timezone})</span>
+                  <span>6:00 PM IST</span>
                 </span>
                 <span className="countdown-meta-bullet" aria-hidden="true">&bull;</span>
                 <span className="countdown-meta-item">
@@ -139,7 +138,7 @@ export const CountdownTimer: React.FC = () => {
                 title="Preview the celebratory message displayed on wedding day"
               >
                 <Sparkles size={11} />
-                <span>Preview Wedding-Day Message</span>
+                <span>Preview Wedding-Day State</span>
               </button>
             </div>
           </div>
@@ -155,7 +154,7 @@ export const CountdownTimer: React.FC = () => {
             </div>
 
             <span className="wedding-day-tag">THE AUSPICIOUS DAY HAS ARRIVED</span>
-            <h3 className="wedding-day-title">Today We Become One</h3>
+            <h3 className="wedding-day-title">Today We Celebrate Love</h3>
 
             <div className="wedding-day-couple-names">
               <span className="couple-name">{wedding.couple.brideName}</span>
@@ -164,8 +163,8 @@ export const CountdownTimer: React.FC = () => {
             </div>
 
             <p className="wedding-day-body">
-              The sacred Muhurtham ceremonies are underway at <strong>{wedding.venue.formalName}</strong>. 
-              With the cherished blessings of our elders and the divine grace of the Almighty, 
+              The sacred Muhurtham ceremonies are underway at <strong>{wedding.venue.name}</strong>.
+              With the cherished blessings of our elders and the divine grace of the Almighty,
               our celebration of love and eternal vows begins today.
             </p>
 
@@ -179,14 +178,15 @@ export const CountdownTimer: React.FC = () => {
                 <span>Shower Flower Blessings 🌸</span>
               </button>
 
-              {/* Toggle Back to Live Countdown */}
-              <button
-                type="button"
-                className="btn-back-to-timer"
-                onClick={() => setIsPreviewWeddingDay(false)}
-              >
-                <span>&larr; View Live Countdown</span>
-              </button>
+              {isPreviewWeddingDay && (
+                <button
+                  type="button"
+                  className="btn-reset-preview"
+                  onClick={() => setIsPreviewWeddingDay(false)}
+                >
+                  Return to Live Countdown
+                </button>
+              )}
             </div>
           </div>
         )}

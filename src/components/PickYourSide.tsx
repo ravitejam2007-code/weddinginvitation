@@ -42,7 +42,23 @@ export const PickYourSide: React.FC<PickYourSideProps> = ({
             </span>
           )}
           <div className="team-avatar-wrap bride-avatar">
-            <span className="team-emoji" aria-hidden="true">🌸</span>
+            {/* Traditional floral icon as in reference video */}
+            <svg viewBox="0 0 40 40" width="30" height="30" fill="none">
+              <circle cx="20" cy="20" r="18" fill="#e11d48" />
+              <circle cx="20" cy="20" r="15" fill="#f43f5e" />
+              {/* Starry floral petals */}
+              <circle cx="20" cy="20" r="3.5" fill="#ffffff" />
+              {[0, 60, 120, 180, 240, 300].map((deg) => (
+                <circle
+                  key={deg}
+                  cx={20 + 7 * Math.cos((deg * Math.PI) / 180)}
+                  cy={20 + 7 * Math.sin((deg * Math.PI) / 180)}
+                  r="2.5"
+                  fill="#ffffff"
+                  opacity="0.95"
+                />
+              ))}
+            </svg>
           </div>
           <span className="team-label">Team Bride</span>
           <span className="team-member-name">{wedding.couple.brideName}</span>
@@ -66,7 +82,18 @@ export const PickYourSide: React.FC<PickYourSideProps> = ({
             </span>
           )}
           <div className="team-avatar-wrap groom-avatar">
-            <span className="team-emoji" aria-hidden="true">🍨</span>
+            {/* Traditional Safa / Turban emblem as in reference video */}
+            <svg viewBox="0 0 40 40" width="30" height="30" fill="none">
+              <circle cx="20" cy="20" r="18" fill="#d97706" />
+              <circle cx="20" cy="20" r="15" fill="#f59e0b" />
+              {/* Royal feather kalgi / crest */}
+              <path
+                d="M 20 8 C 22 13, 27 16, 27 21 C 27 26, 23 28, 20 28 C 17 28, 13 26, 13 21 C 13 16, 18 13, 20 8 Z"
+                fill="#ffffff"
+              />
+              <circle cx="20" cy="21" r="2.5" fill="#b45309" />
+              <circle cx="20" cy="12" r="1.5" fill="#fef08a" />
+            </svg>
           </div>
           <span className="team-label">Team Groom</span>
           <span className="team-member-name">{wedding.couple.groomName}</span>
@@ -81,7 +108,7 @@ export const PickYourSide: React.FC<PickYourSideProps> = ({
             <strong>
               {selectedSide === 'bride'
                 ? `Team Bride — ${wedding.couple.brideName}! 🌸`
-                : `Team Groom — ${wedding.couple.groomName}! 🍨`}
+                : `Team Groom — ${wedding.couple.groomName}! 👑`}
             </strong>
           </p>
         </div>

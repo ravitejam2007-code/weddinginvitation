@@ -15,10 +15,10 @@ export interface WeddingEventData {
 export const wedding = {
   timezone: 'Asia/Kolkata',
   couple: {
-    brideName: 'Ashmita',
-    groomName: 'Sripad',
-    hashtag: '#ASHMITAWEDSSRIPAD',
-    slug: 'ashmita-sripad',
+    brideName: 'Saanvi',
+    groomName: 'Vihaan',
+    hashtag: '#SAANVIWEDSVIHAAN',
+    slug: 'saanvi-vihaan',
   },
   families: {
     bride: {
@@ -94,6 +94,7 @@ export const wedding = {
       quote: 'The sacred vows, the holy fire, and the eternal seven steps — with your heartfelt blessings.',
       image: '/images/couple_portrait.jpg',
       hasScratchReveal: false,
+      interactiveActionLabel: 'View Invitation',
     },
   ] satisfies WeddingEventData[],
 } as const;

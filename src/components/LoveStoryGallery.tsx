@@ -1,18 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
   X, 
   ChevronLeft, 
   ChevronRight, 
   Maximize2, 
   Sparkles, 
-  Heart, 
-  Music
+  Heart
 } from 'lucide-react';
-import { useMusic } from '../context/useMusic';
 import { formatWeddingDateShort, wedding } from '../data/wedding';
 
 interface StoryPhoto {
@@ -74,29 +68,8 @@ const storyPhotos: StoryPhoto[] = [
   },
 ];
 
-const formatTime = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-};
-
 export const LoveStoryGallery: React.FC = () => {
-  const { 
-    isPlaying, 
-    currentTime, 
-    duration, 
-    progressPercent, 
-    isMuted, 
-    trackTitle, 
-    trackArtist, 
-    togglePlay, 
-    seek, 
-    toggleMute 
-  } = useMusic();
-
   const [activePhotoIdx, setActivePhotoIdx] = useState<number | null>(null);
-  const [isScrubbing, setIsScrubbing] = useState(false);
-  const progressBarRef = useRef<HTMLDivElement | null>(null);
   const lightboxRef = useRef<HTMLDivElement | null>(null);
   const triggerButtonRefs = useRef<{ [key: number]: HTMLButtonElement | null }>({});
 
@@ -134,33 +107,6 @@ export const LoveStoryGallery: React.FC = () => {
     };
   }, [activePhotoIdx]);
 
-  // Progress Bar Seek Interaction
-  const handleSeekFromEvent = (e: React.MouseEvent<HTMLDivElement> | MouseEvent) => {
-    if (!progressBarRef.current) return;
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
-    seek(ratio * duration);
-  };
-
-  const handleProgressBarMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsScrubbing(true);
-    handleSeekFromEvent(e);
-
-    const onMouseMove = (moveEvent: MouseEvent) => {
-      handleSeekFromEvent(moveEvent);
-    };
-
-    const onMouseUp = () => {
-      setIsScrubbing(false);
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-    };
-
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-  };
-
   const handleCloseLightbox = () => {
     const lastIdx = activePhotoIdx;
     setActivePhotoIdx(null);
@@ -197,103 +143,6 @@ export const LoveStoryGallery: React.FC = () => {
           Small keepsakes of laughter, promises under the stars, and the beautiful path leading to our wedding day
         </p>
       </header>
-
-      {/* ─────────────────────────────────────────────────────────────
-          MINIMALIST WEDDING MUSIC PLAYER (CONFIRMED TRACK)
-          ───────────────────────────────────────────────────────────── */}
-      <div className="minimalist-music-player-card deckled-paper" aria-label="Traditional Wedding Music Player">
-        <div className="player-hairline-frame" aria-hidden="true" />
-
-        <div className="player-inner-content">
-          {/* Left: Play/Pause Button & Visualizer */}
-          <div className="player-control-col">
-            <button
-              type="button"
-              className={`player-play-btn ${isPlaying ? 'is-playing' : ''}`}
-              onClick={togglePlay}
-              aria-label={isPlaying ? 'Pause wedding music' : 'Play traditional wedding music'}
-              title={isPlaying ? 'Pause music' : 'Play music'}
-            >
-              {isPlaying ? (
-                <Pause size={18} className="player-play-icon" />
-              ) : (
-                <Play size={18} className="player-play-icon play-offset" />
-              )}
-            </button>
-
-            {/* Subtle animated equalizer bars */}
-            <div className={`player-eq-bars ${isPlaying ? 'eq-active' : ''}`} aria-hidden="true">
-              <span className="eq-bar bar-1" />
-              <span className="eq-bar bar-2" />
-              <span className="eq-bar bar-3" />
-              <span className="eq-bar bar-4" />
-            </div>
-          </div>
-
-          {/* Center: Track Metadata & Progress Scrubber */}
-          <div className="player-track-col">
-            <div className="player-track-info-row">
-              <div className="player-title-stack">
-                <span className="player-track-badge">CONFIRMED CEREMONIAL RAGA</span>
-                <h4 className="player-track-title">{trackTitle}</h4>
-                <p 
-                  className="player-track-artist" 
-                  dangerouslySetInnerHTML={{ __html: trackArtist }} 
-                />
-              </div>
-
-              {/* Mute/Volume Toggle */}
-              <button
-                type="button"
-                className={`player-mute-btn ${isMuted ? 'muted' : ''}`}
-                onClick={toggleMute}
-                aria-label={isMuted ? 'Unmute music' : 'Mute music'}
-                title={isMuted ? 'Unmute music' : 'Mute music'}
-              >
-                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-              </button>
-            </div>
-
-            {/* Interactive Progress Scrubber Bar */}
-            <div className="player-scrubber-row">
-              <span className="player-time-text">{formatTime(currentTime)}</span>
-
-              <div
-                ref={progressBarRef}
-                className={`player-progress-bar-track ${isScrubbing ? 'scrubbing' : ''}`}
-                role="slider"
-                tabIndex={0}
-                aria-label="Audio progress slider"
-                aria-valuemin={0}
-                aria-valuemax={duration}
-                aria-valuenow={Math.round(currentTime)}
-                aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
-                onMouseDown={handleProgressBarMouseDown}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowRight') seek(currentTime + 5);
-                  if (e.key === 'ArrowLeft') seek(currentTime - 5);
-                }}
-              >
-                <div 
-                  className="player-progress-bar-fill" 
-                  style={{ width: `${progressPercent}%` }} 
-                />
-                <div 
-                  className="player-progress-handle" 
-                  style={{ left: `${progressPercent}%` }} 
-                />
-              </div>
-
-              <span className="player-time-text">{formatTime(duration)}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="player-footnote-hint">
-          <Music size={11} className="player-note-icon" />
-          <span>Press play to accompany the love story with acoustic shehnai and sitar</span>
-        </div>
-      </div>
 
       {/* ─────────────────────────────────────────────────────────────
           STAGGERED EDITORIAL PHOTO PRINTS GALLERY

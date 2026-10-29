@@ -28,8 +28,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             <svg viewBox="0 0 40 40" width="36" height="36" fill="none">
               <path d="M2 38 L2 2 L38 2" stroke="#d4af37" strokeWidth="1.2" />
               <path d="M6 34 L6 6 L34 6" stroke="#d4af37" strokeWidth="0.6" strokeDasharray="2 2" />
-              {/* Botanical sprig flourish */}
-              <path d="M6 6 C12 12, 18 10, 22 4 C16 10, 10 16, 4 22" stroke="#688467" strokeWidth="1" />
+              <path d="M6 6 C12 12, 18 10, 22 4 C16 10, 10 16, 4 22" stroke="#c46d4c" strokeWidth="1" />
               <circle cx="22" cy="4" r="1.5" fill="#d4af37" />
               <circle cx="4" cy="22" r="1.5" fill="#d4af37" />
               <circle cx="14" cy="14" r="2" fill="#fad674" />
@@ -40,7 +39,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             <svg viewBox="0 0 40 40" width="36" height="36" fill="none">
               <path d="M38 38 L38 2 L2 2" stroke="#d4af37" strokeWidth="1.2" />
               <path d="M34 34 L34 6 L6 6" stroke="#d4af37" strokeWidth="0.6" strokeDasharray="2 2" />
-              <path d="M34 6 C28 12, 22 10, 18 4 C24 10, 30 16, 36 22" stroke="#688467" strokeWidth="1" />
+              <path d="M34 6 C28 12, 22 10, 18 4 C24 10, 30 16, 36 22" stroke="#c46d4c" strokeWidth="1" />
               <circle cx="18" cy="4" r="1.5" fill="#d4af37" />
               <circle cx="36" cy="22" r="1.5" fill="#d4af37" />
               <circle cx="26" cy="14" r="2" fill="#fad674" />
@@ -51,7 +50,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             <svg viewBox="0 0 40 40" width="36" height="36" fill="none">
               <path d="M2 2 L2 38 L38 38" stroke="#d4af37" strokeWidth="1.2" />
               <path d="M6 6 L6 34 L34 34" stroke="#d4af37" strokeWidth="0.6" strokeDasharray="2 2" />
-              <path d="M6 34 C12 28, 18 30, 22 36 C16 30, 10 24, 4 18" stroke="#688467" strokeWidth="1" />
+              <path d="M6 34 C12 28, 18 30, 22 36 C16 30, 10 24, 4 18" stroke="#c46d4c" strokeWidth="1" />
               <circle cx="22" cy="36" r="1.5" fill="#d4af37" />
               <circle cx="4" cy="18" r="1.5" fill="#d4af37" />
               <circle cx="14" cy="26" r="2" fill="#fad674" />
@@ -62,7 +61,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             <svg viewBox="0 0 40 40" width="36" height="36" fill="none">
               <path d="M38 2 L38 38 L2 38" stroke="#d4af37" strokeWidth="1.2" />
               <path d="M34 6 L34 34 L6 34" stroke="#d4af37" strokeWidth="0.6" strokeDasharray="2 2" />
-              <path d="M34 34 C28 28, 22 30, 18 36 C24 30, 30 24, 36 18" stroke="#688467" strokeWidth="1" />
+              <path d="M34 34 C28 28, 22 30, 18 36 C24 30, 30 24, 36 18" stroke="#c46d4c" strokeWidth="1" />
               <circle cx="18" cy="36" r="1.5" fill="#d4af37" />
               <circle cx="36" cy="18" r="1.5" fill="#d4af37" />
               <circle cx="26" cy="26" r="2" fill="#fad674" />
@@ -73,27 +72,35 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
         {/* Card Header & Sacred Invocation */}
         <header className="card-header reveal-item-1">
           <div className="shree-ganesha-badge">
-            <GaneshaMotif size={34} embossed={true} />
+            <GaneshaMotif size={32} embossed={true} />
             <span className="shloka-text">|| श्री गणेशाय नमः ||</span>
           </div>
         </header>
 
+        {/* Illustrated Portrait from Reference Video */}
+        <div className="card-portrait-feature reveal-item-2">
+          <img
+            src="/images/couple_portrait.jpg"
+            alt={`${wedding.couple.brideName} and ${wedding.couple.groomName} in traditional wedding attire`}
+            className="card-portrait-thumb"
+          />
+        </div>
+
         {/* Main Announcement Content */}
         <div className="card-body">
-          {/* Confirmed Client Info: Together with their families */}
           <div className="reveal-item-2">
             <p className="invitation-lead-text">
               Together with their families
             </p>
 
             <div className="family-introduction-block">
-              <span className="family-names">{wedding.families.bride.invitationLine}</span>
+              <span className="family-names">{wedding.families.bride.parents}</span>
               <span className="family-ampersand">&amp;</span>
-              <span className="family-names">{wedding.families.groom.invitationLine}</span>
+              <span className="family-names">{wedding.families.groom.parents}</span>
             </div>
 
             <p className="invitation-request-phrase">
-              cordially request the honor of your presence to celebrate the auspicious wedding ceremony of their children
+              cordially request the honor of your presence to celebrate the wedding ceremony of their children
             </p>
           </div>
 
@@ -101,7 +108,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           <div className="couple-announcement-wrap reveal-item-3">
             <div className="bride-callout">
               <h1 className="couple-name bride-name">{wedding.couple.brideName}</h1>
-              <p className="couple-lineage">{wedding.families.bride.lineage}</p>
+              <p className="couple-lineage">Daughter of {wedding.families.bride.parents}</p>
             </div>
 
             <div className="calligraphic-ampersand" aria-hidden="true">
@@ -110,7 +117,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
 
             <div className="groom-callout">
               <h1 className="couple-name groom-name">{wedding.couple.groomName}</h1>
-              <p className="couple-lineage">{wedding.families.groom.lineage}</p>
+              <p className="couple-lineage">Son of {wedding.families.groom.parents}</p>
             </div>
           </div>
 
@@ -138,7 +145,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
               onClick={onExploreSuite}
               title="Continue to full wedding festivities, itinerary and RSVP"
             >
-              <span>Explore Festivities &amp; RSVP</span>
+              <span>SEE ALL CELEBRATIONS</span>
               <ChevronDown size={15} className="bounce-arrow" />
             </button>
 
@@ -147,7 +154,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
                 type="button"
                 className="btn-reseal-small"
                 onClick={onClose}
-                title="Fold card and re-seal envelope"
+                title="Close and seal invitation"
               >
                 <RotateCcw size={12} />
                 <span>Re-seal</span>
@@ -158,9 +165,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
 
         {/* Footer Blessing */}
         <footer className="card-footer-mini">
-          <p className="card-blessing-note">
-            &ldquo;May your love, blessings and presence grace our celebration.&rdquo;
-          </p>
+          <span className="mini-hashtag">{wedding.couple.hashtag}</span>
         </footer>
       </div>
     </article>

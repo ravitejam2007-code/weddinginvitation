@@ -1,6 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 230" preserveAspectRatio="none">
-  <defs><linearGradient id="flap" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#929d84"/><stop offset=".72" stop-color="#7f8c70"/><stop offset="1" stop-color="#626f56"/></linearGradient></defs>
-  <path d="M0 0h580L290 228Z" fill="url(#flap)"/>
-  <path d="M1 1h578L290 225Z" fill="none" stroke="#fffdf9" stroke-opacity=".23" stroke-width="1.5"/>
-  <path d="M7 3 290 221 573 3" fill="none" stroke="#47513f" stroke-opacity=".24" stroke-width="1"/>
+  <defs>
+    <linearGradient id="flapIvory" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="65%" stop-color="#fdfbf7"/>
+      <stop offset="100%" stop-color="#f4eee2"/>
+    </linearGradient>
+  </defs>
+  <path d="M0 0h580L290 228Z" fill="url(#flapIvory)"/>
+  <path d="M1 1h578L290 225Z" fill="none" stroke="#d4af37" stroke-opacity=".4" stroke-width="1.2"/>
+  <path d="M6 3 290 221 574 3" fill="none" stroke="#eedbb2" stroke-opacity=".7" stroke-width="0.8"/>
 </svg>

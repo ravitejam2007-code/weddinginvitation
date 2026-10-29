@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { weddingEvents } from '../data/events';
 import { EventCard } from './EventCard';
-import { GuestInformation } from './GuestInformation';
 import { LoveStoryGallery } from './LoveStoryGallery';
 import { HaldiScratchReveal } from './HaldiScratchReveal';
 import { MehndiTraceReveal } from './MehndiTraceReveal';
 import { SangeetDholReveal } from './SangeetDholReveal';
+import { WeddingInvitationModal } from './WeddingInvitationModal';
 import { PickYourSide } from './PickYourSide';
 import { CountdownTimer } from './CountdownTimer';
 import { RsvpForm } from './RsvpForm';
@@ -17,7 +17,7 @@ interface InvitationSuiteProps {
 }
 
 export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
-  const [activeModal, setActiveModal] = useState<'haldi' | 'mehndi' | 'sangeet' | null>(null);
+  const [activeModal, setActiveModal] = useState<'haldi' | 'mehndi' | 'sangeet' | 'wedding' | null>(null);
   const [selectedSide, setSelectedSide] = useState<'bride' | 'groom' | null>('bride');
 
   const scrollToSection = (id: string) => {
@@ -38,24 +38,24 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
           <span className="shloka-mini">|| श्री गणेशाय नमः ||</span>
         </div>
 
-        {/* Family Introduction (Understated, Confirmed Spellings) */}
+        {/* Family Introduction */}
         <header className="hero-family-intro">
           <p className="hero-intro-lead">Together with their families</p>
           <div className="hero-parents-grid">
-            <span className="hero-parent-name">{wedding.families.bride.invitationLine}</span>
+            <span className="hero-parent-name">{wedding.families.bride.parents}</span>
             <span className="hero-parent-amp">&amp;</span>
-            <span className="hero-parent-name">{wedding.families.groom.invitationLine}</span>
+            <span className="hero-parent-name">{wedding.families.groom.parents}</span>
           </div>
           <p className="hero-intro-sub">
-            cordially invite you to celebrate the joyous union and wedding of their children
+            cordially invite you to celebrate the wedding ceremony of their children
           </p>
         </header>
 
-        {/* Dominant Couple Name Typography (Serif & Calligraphic) */}
+        {/* Dominant Couple Name Typography */}
         <div className="hero-dominant-couple-names">
           <div className="hero-name-block">
             <h1 className="hero-couple-title">{wedding.couple.brideName}</h1>
-            <span className="hero-lineage-subtitle">{wedding.families.bride.lineage}</span>
+            <span className="hero-lineage-subtitle">Daughter of {wedding.families.bride.parents}</span>
           </div>
 
           <div className="hero-calligraphic-amp" aria-hidden="true">
@@ -64,22 +64,22 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
 
           <div className="hero-name-block">
             <h1 className="hero-couple-title">{wedding.couple.groomName}</h1>
-            <span className="hero-lineage-subtitle">{wedding.families.groom.lineage}</span>
+            <span className="hero-lineage-subtitle">Son of {wedding.families.groom.parents}</span>
           </div>
         </div>
 
-        {/* Central Original Hand-Painted Illustrated Portrait */}
+        {/* Central Original Hand-Painted Illustrated Portrait from Video */}
         <div className="hero-portrait-container">
           <div className="portrait-deckled-matte">
             <img
               src="/images/couple_portrait.jpg"
-              alt={`Original hand-painted watercolor portrait of ${wedding.couple.brideName} and ${wedding.couple.groomName} in traditional wedding attire`}
+              alt={`${wedding.couple.brideName} and ${wedding.couple.groomName} in traditional South Indian wedding attire`}
               className="hero-portrait-img"
             />
           </div>
         </div>
 
-        {/* Understated Wedding Announcement Details */}
+        {/* Wedding Announcement Details */}
         <div className="hero-announcement-understated">
           <div className="hero-divider-flourish" aria-hidden="true" />
           <p className="announcement-ceremony-type">THE WEDDING CELEBRATION</p>
@@ -159,6 +159,7 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
                   if (id === 'haldi') setActiveModal('haldi');
                   else if (id === 'mehndi') setActiveModal('mehndi');
                   else if (id === 'sangeet') setActiveModal('sangeet');
+                  else if (id === 'wedding') setActiveModal('wedding');
                 }}
               />
             ))}
@@ -166,13 +167,7 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
         </div>
       </section>
 
-      {/* 4. Dress Code & Guest Information Collection */}
-      <GuestInformation />
-
-      {/* 5. Music and Love Story Gallery */}
-      <LoveStoryGallery />
-
-      {/* 6. "Pick Your Side" Friendly Rivalry (From Video 00:54) */}
+      {/* 4. "Pick Your Side" Friendly Rivalry (From Video 00:54) */}
       <PickYourSide
         selectedSide={selectedSide}
         onSelectSide={(side) => setSelectedSide(side)}
@@ -181,17 +176,24 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
       {/* 5. Live Muhurtham Countdown (From Video 00:58) */}
       <CountdownTimer />
 
-      {/* 6. RSVP Form with WhatsApp Integration (From Video 01:04) */}
+      {/* 6. Love Story Gallery */}
+      <LoveStoryGallery />
+
+      {/* 7. RSVP Form with WhatsApp Integration (From Video 01:04) */}
       <RsvpForm selectedTeam={selectedSide} />
 
-      {/* 7. Auspicious Closing Footer & Final Thank You Message */}
+      {/* 10. Auspicious Closing Footer & Final Thank You Message (From Video 01:12) */}
       <footer className="auspicious-suite-footer" aria-label="Closing Wedding Blessings">
         <div className="sacred-om-badge" aria-hidden="true">
           <span className="sacred-om-char">ॐ</span>
           <div className="sacred-flame-leaf" />
         </div>
 
-        <span className="footer-eyebrow-tag">WITH LOVE &amp; GRATITUDE</span>
+        <p className="footer-sacred-blessing-text">
+          With the blessings of our elders<br />
+          and the warmth of your presence.
+        </p>
+
         <h3 className="footer-couple-signature">{wedding.couple.brideName} &amp; {wedding.couple.groomName}</h3>
 
         <div className="footer-parents-row">
@@ -217,7 +219,7 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
         </div>
 
         <div className="footer-made-with-love">
-          <span>MADE WITH LOVE &bull; WEDDING INVITATION SUITE ❤️</span>
+          <span>MADE WITH LOVE</span>
         </div>
       </footer>
 
@@ -230,6 +232,9 @@ export const InvitationSuite: React.FC<InvitationSuiteProps> = () => {
       )}
       {activeModal === 'sangeet' && (
         <SangeetDholReveal onClose={() => setActiveModal(null)} />
+      )}
+      {activeModal === 'wedding' && (
+        <WeddingInvitationModal onClose={() => setActiveModal(null)} />
       )}
     </article>
   );
